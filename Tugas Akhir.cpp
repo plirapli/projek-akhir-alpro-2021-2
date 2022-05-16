@@ -1,6 +1,8 @@
 #include <iostream>
 #include <conio.h>
 #include <iomanip>
+#include <string>
+#include <fstream>
 using namespace std;
 
 struct Infotodo {
@@ -130,6 +132,32 @@ int main (){
 			} while (cariUlang == 'y' || cariUlang == 'Y');
 				cout << "\nTerima kasih telah menggunakan program kami!";
 			break;
+		case 6 :
+			cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
+			cout << "Please wait..." << endl << endl;
+			system ("pause");
+			system ("cls");
+			ofstream ofs("export.txt");
+			if (ofs.is_open()) {
+				ofs << " --------------------------------------------------------------------------------------------------------" << endl;
+				ofs << "| ID |                             TO - DO                             |    Input Date   |    Due Date   |" << endl;
+				ofs << " --------------------------------------------------------------------------------------------------------"<< endl;
+				for (int i = 0; i < banyakTodo; i++) {
+					ofs << "|" << setiosflags(ios::left) << setw(4) << i+1;
+					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
+					ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].inputDate;
+					ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate << "|" <<endl;
+					ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
+					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
+					ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
+					ofs << "|" << setiosflags(ios::left) << setw(15) << " " << "|" << endl;
+					ofs << " --------------------------------------------------------------------------------------------------------"<< endl;
+				}
+				ofs.close();
+				cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
+				cout << "Terima kasih telah menggunakan program kami";
+			}
+			break;	
 	}
 }
 
