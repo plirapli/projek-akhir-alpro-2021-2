@@ -158,6 +158,9 @@ int main (){
 				cout << "Terima kasih telah menggunakan program kami";
 			}
 			break;	
+		case 7 :
+			cout << "Terima kasih telah menggunakan program kami.";
+			break;	
 	}
 }
 
