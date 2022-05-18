@@ -3,13 +3,15 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+using namespace std;
 
 struct Infotodo
 {
 	int id;
-	bool selesai;
 	string judul, isi;
-	string dueDate, inputDate;
+	bool selesai;
+	string dueDate;
+	string inputDate;
 };
 
 void sorting(int array[], int size);
@@ -22,9 +24,8 @@ int main()
 
 	cout << "Banyak To-Do yang ingin di list : ";
 	cin >> banyakTodo;
-
 	Infotodo todo[banyakTodo];
-	cout << "\n";
+	cout << endl;
 	cin.ignore();
 
 	for (int i = 0; i < banyakTodo; i++)
@@ -33,17 +34,13 @@ int main()
 		cout << "Date Format : DD/MM/YYYY" << endl;
 		cout << "Input Date  : ";
 		getline(cin, todo[i].inputDate);
-
 		cout << "Judul       : ";
 		getline(cin, todo[i].judul);
-
 		cout << "Isi         : ";
 		getline(cin, todo[i].isi);
-
 		cout << "Due Date    : ";
 		getline(cin, todo[i].dueDate);
-
-		cout << "\n";
+		cout << endl;
 	}
 
 	system("pause");
@@ -84,7 +81,7 @@ int main()
 	cout << "Menu : " << endl;
 	cout << "[1] Tambah To-Do" << endl;
 	cout << "[2] Edit To-Do" << endl;
-	cout << "[3] Hapus To-Do" << endl;
+	cout << "[3] Delete To-Do" << endl;
 	cout << "[4] Urutkan To-Do" << endl;
 	cout << "[5] Cari To-Do" << endl;
 	cout << "[6] Eksport To-Do" << endl;
@@ -105,19 +102,25 @@ int main()
 	{
 	case 1:
 		break;
+
 	case 2:
 		break;
+
 	case 3:
 		break;
+
 	case 4:
 		break;
+
 	case 5:
 		do
 		{
 			cout << "Masukkan ID To-Do yang ingin dicari : ";
 			cin >> idTodo;
+
 			found = false;
 			i = 0;
+
 			while ((i <= banyakTodo) && !(found))
 			{
 				if (todo[i].id == idTodo)
@@ -125,6 +128,7 @@ int main()
 				else
 					i++;
 			}
+
 			if (found)
 			{
 				cout << endl;
@@ -141,7 +145,6 @@ int main()
 			{
 				cout << "\nApakah anda ingin mencari data lagi y/n ? ";
 				cin >> cariUlang;
-
 				if (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'))
 					cout << "Input yang anda masukkan salah!" << endl;
 			} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
@@ -157,12 +160,14 @@ int main()
 		break;
 
 	case 6:
+	{
 		cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
 		cout << "Please wait..." << endl
 				 << endl;
 		system("pause");
 		system("cls");
 		ofstream ofs("export.txt");
+
 		if (ofs.is_open())
 		{
 			ofs << " --------------------------------------------------------------------------------------------------------" << endl;
@@ -181,11 +186,16 @@ int main()
 						<< "|" << endl;
 				ofs << " --------------------------------------------------------------------------------------------------------" << endl;
 			}
+
 			ofs.close();
+
 			cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
 			cout << "Terima kasih telah menggunakan program kami";
 		}
+
 		break;
+	}
+
 	case 7:
 		cout << "Terima kasih telah menggunakan program kami.";
 		break;
