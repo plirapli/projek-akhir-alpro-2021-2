@@ -23,15 +23,23 @@ struct InfoTodo
 
 // CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
+void readTodoSearch(InfoTodo todo[], int jml, int searchRes[]);
 void addTodo(int jml);
 void editTodo(InfoTodo todo[], int id, int jml);
-void readFile(InfoTodo todo[], int &jml);
-void addToFile(InfoTodo todo);
-void addFiles(InfoTodo todo[], int jml);
 
+// R/W Files
+void readFile(InfoTodo todo[], int &jml); // Read files
+void addToFile(InfoTodo todo);						// Write single file
+void addFiles(InfoTodo todo[], int jml);	// Write multiple files
+
+// Sorting
 void sorting(int array[], int size);
 
+// Searching
 void searchById(InfoTodo todo[], int jml);
+void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
+
+int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
 
 // Fungsi buat Tanggal
 string getCurrentTime();
@@ -39,8 +47,12 @@ string numMonth(string month);
 int *getDateInt(string date);
 int strToInt(string str);
 
+// Manipulasi String
 string replaceSpasi(string str);
 string replaceHyphen(string str);
+
+// Misc
+void pressAnyKey();
 
 int main()
 {
@@ -88,7 +100,6 @@ int main()
 			// Menampilkan Todo
 			readTodo(todo, id, id - 1);
 			editTodo(todo, id, banyakTodo);
-
 			break;
 		}
 
@@ -112,6 +123,7 @@ int main()
 		}
 
 		case '5':
+		{
 			cout << "Cari berdasarkan: \n"
 					 << "[1] ID \n"
 					 << "[2] Start Date \n"
@@ -127,12 +139,20 @@ int main()
 				searchById(todo, banyakTodo);
 				break;
 
+			case '2':
+				searchByDate(todo, banyakTodo);
+				break;
+
+			case '3':
+				searchByDate(todo, banyakTodo, 0);
+				break;
+
 			default:
 				break;
 			}
 
-			cout << "\nTerima kasih telah menggunakan program kami!";
 			break;
+		}
 
 		case '6':
 		{
@@ -191,12 +211,34 @@ void readTodo(InfoTodo todo[], int jml, int id)
 
 	for (int i = id; i < jml; i++)
 	{
-		cout << "|" << setiosflags(ios::left) << setw(4) << i + 1;
+		cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
 		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
+		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
+		cout << "|" << setiosflags(ios::left) << setw(15) << " "
+				 << "|" << endl;
+		cout << " --------------------------------------------------------------------------------------------------------" << endl;
+	}
+	cout << "\n";
+}
+
+void readTodoSearch(InfoTodo todo[], int jml, int searchRes[])
+{
+	cout << " --------------------------------------------------------------------------------------------------------" << endl;
+	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |" << endl;
+	cout << " --------------------------------------------------------------------------------------------------------" << endl;
+
+	for (int i = 1; i < jml; i++)
+	{
+		cout << "|" << setiosflags(ios::left) << setw(4) << todo[searchRes[i]].id;
+		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].judul;
+		cout << "|" << setiosflags(ios::left) << setw(17) << todo[searchRes[i]].startDate;
+		cout << "|" << setiosflags(ios::left) << setw(15) << todo[searchRes[i]].dueDate << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
+		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(15) << " "
 				 << "|" << endl;
@@ -239,10 +281,10 @@ void addTodo(int jml)
 	todo.id = jml + 1;
 	todo.startDate = getCurrentTime();
 
-	cout << "Judul  \t\t: ";
+	cout << "Judul  \t\t\t: ";
 	cin.ignore();
 	getline(cin, todo.judul);
-	cout << "Isi \t\t: ";
+	cout << "Isi \t\t\t: ";
 	getline(cin, todo.isi);
 	cout << "Due Date [DD/MM/YYY]: ";
 	cin >> todo.dueDate;
@@ -250,9 +292,8 @@ void addTodo(int jml)
 	addToFile(todo);
 
 	cout << "\n"
-			 << "Berhasil menambahkan todo!";
-	getch();
-	system(CLEAR);
+			 << "Berhasil menambahkan todo! \n";
+	pressAnyKey();
 }
 
 void addToFile(InfoTodo todo)
@@ -330,7 +371,12 @@ void editTodo(InfoTodo todo[], int id, int jml)
 		cout << "Ubah judul: ";
 		cin.ignore();
 		getline(cin, judul);
+
 		todo[id - 1].judul = judul;
+
+		cout << "\n";
+		cout << "Berhasil mengubah judul! \n\n";
+		pressAnyKey();
 		break;
 
 	case '2':
@@ -340,8 +386,9 @@ void editTodo(InfoTodo todo[], int id, int jml)
 
 		todo[id - 1].isi = isi;
 
-		cout << "Berhasil mengubah judul.";
-		getch();
+		cout << "\n";
+		cout << "Berhasil mengubah isi! \n\n";
+		pressAnyKey();
 		break;
 
 	case '3':
@@ -351,14 +398,15 @@ void editTodo(InfoTodo todo[], int id, int jml)
 
 		todo[id - 1].dueDate = dueDate;
 
-		cout << "Berhasil mengubah isi.";
-		getch();
+		cout << "\n";
+		cout << "Berhasil mengubah tanggal! \n\n";
+		pressAnyKey();
 		break;
 
 	case '4':
 		todo[id - 1].selesai = !status;
-		cout << "Berhasil mengubah status todo.";
-		getch();
+		cout << "Berhasil mengubah status Todo! \n";
+		pressAnyKey();
 		break;
 
 	default:
@@ -436,6 +484,60 @@ void searchById(InfoTodo todo[], int jml)
 			system(CLEAR);
 		}
 	} while (cariUlang == 'y' || cariUlang == 'Y');
+}
+
+void searchByDate(InfoTodo todo[], int jml, bool startDate)
+{
+	string dateInput;
+	int *result;
+
+	cout << "Masukkan tanggal: ";
+	cin >> dateInput;
+
+	result = multipleSearch(todo, jml, dateInput, startDate);
+
+	if (result[0] != 0)
+		readTodoSearch(todo, result[0], result);
+	else
+		cout << "Todo tidak ditemukan. \n";
+
+	pressAnyKey();
+}
+
+int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
+{
+	int *res = new int[100];
+	int resIndex = 1;
+	bool isFound = 0;
+
+	if (startDate)
+	{
+		for (int i = 0; i < jml; i++)
+		{
+			if (input == todo[i].startDate)
+			{
+				isFound = 1;
+				res[resIndex] = i;
+				resIndex++;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < jml; i++)
+		{
+			if (input == todo[i].dueDate)
+			{
+				isFound = 1;
+				res[resIndex] = i;
+				resIndex++;
+			}
+		}
+	}
+
+	res[0] = (isFound) ? resIndex : 0;
+
+	return res;
 }
 
 string getCurrentTime()
@@ -526,4 +628,11 @@ string replaceHyphen(string str)
 			str[i] = ' ';
 
 	return str;
+}
+
+void pressAnyKey()
+{
+	cout << "[Press any key to continue.]";
+	getch();
+	system(CLEAR);
 }
