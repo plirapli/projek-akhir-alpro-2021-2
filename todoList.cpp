@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-// Ngecek OS
+// Ngecek OS doang
 #ifdef _WIN32
 #define CLEAR "cls"
 #else
@@ -22,12 +22,16 @@ struct InfoTodo
 };
 
 // CRUD
-void readTodo(InfoTodo todo[], int jml);
+void readTodo(InfoTodo todo[], int jml, int id = 0);
 void addTodo(int jml);
+void editTodo(InfoTodo todo[], int id, int jml);
 void readFile(InfoTodo todo[], int &jml);
 void addToFile(InfoTodo todo);
+void addFiles(InfoTodo todo[], int jml);
 
 void sorting(int array[], int size);
+
+void searchById(InfoTodo todo[], int jml);
 
 // Fungsi buat Tanggal
 string getCurrentTime();
@@ -64,7 +68,7 @@ int main()
 		cout << "Pilihan menu: ";
 		cin >> pilihanMenu;
 
-		system("cls");
+		system(CLEAR);
 
 		switch (pilihanMenu)
 		{
@@ -73,7 +77,22 @@ int main()
 			break;
 
 		case '2':
+		{
+			int id;
+
+			readTodo(todo, banyakTodo);
+			cout << "\n";
+
+			cout << "Masukkan Id: ";
+			cin >> id;
+			system(CLEAR);
+
+			// Menampilkan Todo
+			readTodo(todo, id, id - 1);
+			editTodo(todo, id, banyakTodo);
+
 			break;
+		}
 
 		case '3':
 			break;
@@ -95,6 +114,23 @@ int main()
 		}
 
 		case '5':
+			// cout << "Cari berdasarkan: \n"
+			// 		 << "[1] ID \n"
+			// 		 << "[2] Start Date \n"
+			// 		 << "[3] Due Date \n"
+			// 		 << "[...] Kembali \n"
+			// 		 << "Pilih > ";
+			// cin >> pilihanMenu;
+
+			// // switch (pilihanMenu)
+			// // {
+			// // case '1':
+			// // 	break;
+
+			// // default:
+			// // 	break;
+			// // }
+
 			do
 			{
 				cout << "Masukkan ID To-Do yang ingin dicari : ";
@@ -180,20 +216,23 @@ int main()
 		}
 
 		default:
-			cout << "Terima kasih telah menggunakan program kami.";
 			isExit = 1;
 			break;
 		}
+		system(CLEAR);
 	} while (isExit != 1);
+
+	cout << "Terima kasih telah menggunakan program kami.";
+	return 0;
 }
 
-void readTodo(InfoTodo todo[], int jml)
+void readTodo(InfoTodo todo[], int jml, int id)
 {
 	cout << " --------------------------------------------------------------------------------------------------------" << endl;
 	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |" << endl;
 	cout << " --------------------------------------------------------------------------------------------------------" << endl;
 
-	for (int i = 0; i < jml; i++)
+	for (int i = id; i < jml; i++)
 	{
 		cout << "|" << setiosflags(ios::left) << setw(4) << i + 1;
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
@@ -269,7 +308,7 @@ void addToFile(InfoTodo todo)
 	if (myFile.is_open())
 	{
 		// Contoh format file:
-		// 1 lorem_ipsum lorem_ipsum_dolor_sit_amet 04/05/2022 19/04/2022 1
+		// 1 lorem_ipsum lorem_ipsum_dolor_sit_amet 04/05/2022 19/04/2022 0
 
 		myFile << todo.id << " "
 					 << todo.judul << " " << todo.isi << " "
@@ -278,6 +317,97 @@ void addToFile(InfoTodo todo)
 
 		myFile.close();
 	}
+	else
+		cout << "Todo masih kosong. \n";
+}
+
+void addFiles(InfoTodo todo[], int jml)
+{
+	int i;
+	string fileName = "rafli.txt"; // Temporary
+
+	for (i = 0; i < jml; i++)
+	{
+		todo[i].judul = replaceSpasi(todo[i].judul);
+		todo[i].isi = replaceSpasi(todo[i].isi);
+	}
+
+	ofstream myFile(fileName);
+	if (myFile.is_open())
+	{
+		for (i = 0; i < jml; i++)
+		{
+			// Contoh format file:
+			// 1 lorem_ipsum lorem_ipsum_dolor_sit_amet 04/05/2022 19/04/2022 0
+
+			myFile << todo[i].id << " "
+						 << todo[i].judul << " " << todo[i].isi << " "
+						 << todo[i].startDate << " " << todo[i].dueDate << " "
+						 << todo[i].selesai << "\n";
+		}
+		myFile.close();
+	}
+	else
+		cout << "Todo masih kosong. \n";
+}
+
+void editTodo(InfoTodo todo[], int id, int jml)
+{
+	char menu;
+	bool status = todo[id - 1].selesai;
+	string judul, isi, dueDate;
+
+	cout << "Pilih yang ingin diubah: \n"
+			 << "[1] Judul \n"
+			 << "[2] Isi \n"
+			 << "[3] Due Date \n"
+			 << "[4] Status \n"
+			 << "[...] Kembali \n"
+			 << "Pilih > ";
+	cin >> menu;
+
+	switch (menu)
+	{
+	case '1':
+		cout << "Ubah judul: ";
+		cin.ignore();
+		getline(cin, judul);
+		todo[id - 1].judul = judul;
+		break;
+
+	case '2':
+		cout << "Ubah isi: ";
+		cin.ignore();
+		getline(cin, isi);
+
+		todo[id - 1].isi = isi;
+
+		cout << "Berhasil mengubah judul.";
+		getch();
+		break;
+
+	case '3':
+		cout << "Ubah Tgl [DD/MM/YYYY]: ";
+		cin.ignore();
+		getline(cin, dueDate);
+
+		todo[id - 1].dueDate = dueDate;
+
+		cout << "Berhasil mengubah isi.";
+		getch();
+		break;
+
+	case '4':
+		todo[id - 1].selesai = !status;
+		cout << "Berhasil mengubah status todo.";
+		getch();
+		break;
+
+	default:
+		break;
+	}
+
+	addFiles(todo, jml);
 }
 
 void sorting(int array[], int size)
@@ -297,6 +427,10 @@ void sorting(int array[], int size)
 		}
 	}
 }
+
+// void searchById(InfoTodo todo[], int jml)
+// {
+// }
 
 string getCurrentTime()
 {
