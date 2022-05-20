@@ -46,15 +46,14 @@ int main()
 {
 	InfoTodo todo[100];
 
-	int banyakTodo = 0, i, idTodo;
-	bool isExit = 0, found;
+	int banyakTodo = 0, idTodo;
+	bool isExit = 0;
 	char cariUlang, pilihanMenu;
 
 	do
 	{
 		readFile(todo, banyakTodo);
 		readTodo(todo, banyakTodo);
-		cout << "\n";
 
 		cout << "Menu: \n"
 				 << "[1] Tambah To-Do \n"
@@ -81,7 +80,6 @@ int main()
 			int id;
 
 			readTodo(todo, banyakTodo);
-			cout << "\n";
 
 			cout << "Masukkan Id: ";
 			cin >> id;
@@ -114,65 +112,24 @@ int main()
 		}
 
 		case '5':
-			// cout << "Cari berdasarkan: \n"
-			// 		 << "[1] ID \n"
-			// 		 << "[2] Start Date \n"
-			// 		 << "[3] Due Date \n"
-			// 		 << "[...] Kembali \n"
-			// 		 << "Pilih > ";
-			// cin >> pilihanMenu;
+			cout << "Cari berdasarkan: \n"
+					 << "[1] ID \n"
+					 << "[2] Start Date \n"
+					 << "[3] Due Date \n"
+					 << "[...] Kembali \n"
+					 << "Pilih > ";
+			cin >> pilihanMenu;
+			system(CLEAR);
 
-			// // switch (pilihanMenu)
-			// // {
-			// // case '1':
-			// // 	break;
-
-			// // default:
-			// // 	break;
-			// // }
-
-			do
+			switch (pilihanMenu)
 			{
-				cout << "Masukkan ID To-Do yang ingin dicari : ";
-				cin >> idTodo;
+			case '1':
+				searchById(todo, banyakTodo);
+				break;
 
-				found = false;
-				i = 0;
-
-				while ((i <= banyakTodo) && !(found))
-				{
-					if (todo[i].id == idTodo)
-						found = true;
-					else
-						i++;
-				}
-
-				if (found)
-				{
-					cout << endl;
-					cout << "Data " << idTodo << " ditemukan!" << endl;
-					cout << "Input Date  : " << todo[i].startDate << endl;
-					cout << "Judul       : " << todo[i].judul << endl;
-					cout << "Isi         : " << todo[i].isi << endl;
-					cout << "Due Date    : " << todo[i].dueDate << endl;
-				}
-				else
-					cout << "Data tidak ditemukan!" << endl;
-
-				do
-				{
-					cout << "\nApakah anda ingin mencari data lagi y/n ? ";
-					cin >> cariUlang;
-					if (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'))
-						cout << "Input yang anda masukkan salah!" << endl;
-				} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
-
-				if (cariUlang == 'y' || cariUlang == 'Y')
-				{
-					system("pause");
-					system("cls");
-				}
-			} while (cariUlang == 'y' || cariUlang == 'Y');
+			default:
+				break;
+			}
 
 			cout << "\nTerima kasih telah menggunakan program kami!";
 			break;
@@ -245,6 +202,7 @@ void readTodo(InfoTodo todo[], int jml, int id)
 				 << "|" << endl;
 		cout << " --------------------------------------------------------------------------------------------------------" << endl;
 	}
+	cout << "\n";
 }
 
 void readFile(InfoTodo todo[], int &jml)
@@ -428,9 +386,57 @@ void sorting(int array[], int size)
 	}
 }
 
-// void searchById(InfoTodo todo[], int jml)
-// {
-// }
+void searchById(InfoTodo todo[], int jml)
+{
+	int idTodo, i;
+	bool found;
+	char cariUlang;
+
+	do
+	{
+		cout << "Masukkan ID To-Do yang ingin dicari : ";
+		cin >> idTodo;
+
+		found = false;
+		i = 0;
+
+		while ((i <= jml) && !(found))
+		{
+			if (todo[i].id == idTodo)
+				found = true;
+			else
+				i++;
+		}
+
+		if (found)
+		{
+			cout << endl;
+			cout << "Data " << idTodo << " ditemukan!" << endl;
+			cout << "Input Date  : " << todo[i].startDate << endl;
+			cout << "Judul       : " << todo[i].judul << endl;
+			cout << "Isi         : " << todo[i].isi << endl;
+			cout << "Due Date    : " << todo[i].dueDate << endl;
+		}
+		else
+			cout << "Data tidak ditemukan!" << endl;
+
+		do
+		{
+			cout << "\nApakah anda ingin mencari data lagi (y/n)? ";
+			cin >> cariUlang;
+
+			if (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'))
+				cout << "Input yang anda masukkan salah!" << endl;
+
+		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
+
+		if (cariUlang == 'y' || cariUlang == 'Y')
+		{
+			system("pause");
+			system(CLEAR);
+		}
+	} while (cariUlang == 'y' || cariUlang == 'Y');
+}
 
 string getCurrentTime()
 {
