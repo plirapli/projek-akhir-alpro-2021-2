@@ -21,16 +21,20 @@ struct InfoTodo
 	string startDate, dueDate;
 };
 
+// CRUD
 void readTodo(InfoTodo todo[], int jml);
-void readFile(InfoTodo todo[], int &jml);
-
 void addTodo(int jml);
+void readFile(InfoTodo todo[], int &jml);
 void addToFile(InfoTodo todo);
 
 void sorting(int array[], int size);
 
+// Fungsi buat Tanggal
 string getCurrentTime();
 string numMonth(string month);
+int *getDateInt(string date);
+int strToInt(string str);
+
 string replaceSpasi(string str);
 string replaceHyphen(string str);
 
@@ -75,7 +79,20 @@ int main()
 			break;
 
 		case '4':
+		{
+			// Tanggal yang masih berbentuk string
+			string tglStr = getCurrentTime();
+
+			// Tanggal yang sudah berbentuk array of integer
+			int *tglInt = getDateInt(tglStr);
+
+			cout << "tgl (string): " << tglStr << "\n";
+			cout << "tgl (int): ";
+			for (int i = 0; i < 3; i++)
+				cout << tglInt[i] << " ";
+
 			break;
+		}
 
 		case '5':
 			do
@@ -313,6 +330,44 @@ string numMonth(string month)
 			return months[1][i];
 
 	return "01";
+}
+
+int *getDateInt(string date)
+{
+	int *tgl = new int[3];
+
+	if (!(date.length() < 9))
+	{
+		// Memisah tgl, bln, thn
+		char day[] = {date[0], date[1], '\0'};
+		char month[] = {date[3], date[4], '\0'};
+		char year[] = {date[6], date[7], date[8], date[9], '\0'};
+
+		tgl[0] = strToInt(day);
+		tgl[1] = strToInt(month);
+		tgl[2] = strToInt(year);
+	}
+	else
+	{
+		cout << "Tidak dapat mengambil tanggal! \n";
+
+		tgl[0] = 31;
+		tgl[1] = 1;
+		tgl[2] = 2022;
+	}
+
+	return tgl;
+}
+
+int strToInt(string str)
+{
+	int num = 0;
+	int n = str.length();
+
+	for (int i = 0; i < n; i++)
+		num = num * 10 + (int(str[i]) - 48);
+
+	return num;
 }
 
 string replaceSpasi(string str)
