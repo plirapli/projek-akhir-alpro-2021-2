@@ -18,8 +18,7 @@ struct InfoTodo
 	int id;
 	string judul, isi;
 	bool selesai = 0;
-	string dueDate;
-	string startDate;
+	string startDate, dueDate;
 };
 
 void readTodo(InfoTodo todo[], int jml);
@@ -206,6 +205,9 @@ void readFile(InfoTodo todo[], int &jml)
 		{
 			myFile >> todo[i].id >> todo[i].judul >> todo[i].isi;
 			myFile >> todo[i].startDate >> todo[i].dueDate >> todo[i].selesai;
+
+			todo[i].judul = replaceHyphen(todo[i].judul);
+			todo[i].isi = replaceHyphen(todo[i].isi);
 			i++;
 		}
 
