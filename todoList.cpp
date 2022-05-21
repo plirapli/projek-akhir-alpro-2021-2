@@ -28,9 +28,9 @@ void addTodo(int jml);
 void editTodo(InfoTodo todo[], int id, int jml);
 
 // R/W Files
-void readFile(InfoTodo todo[], int &jml); // Read files
-void addToFile(InfoTodo todo);						// Write single file
-void addFiles(InfoTodo todo[], int jml);	// Write multiple files
+void readFile(InfoTodo todo[], int &jml);	 // Read files
+void writeFile(InfoTodo todo);						 // Write single file
+void writeFiles(InfoTodo todo[], int jml); // Write multiple files
 
 // Sorting
 void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
@@ -40,6 +40,7 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 // Searching
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
+int searching(InfoTodo todo[], int jml);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
 
 // Fungsi buat Tanggal
@@ -67,6 +68,9 @@ int main()
 
 	do
 	{
+		system(CLEAR);
+		cout << "TODO LIST APP \n";
+
 		readFile(todo, banyakTodo);
 		readTodo(todo, banyakTodo);
 
@@ -106,7 +110,29 @@ int main()
 		}
 
 		case '3':
+		{
+			int inputId;
+			readTodo(todo, banyakTodo);
+
+			cout << "Masukkan Nomor: ";
+			cin >> inputId;
+
+			// Menaikkan baris
+			for (int i = inputId - 1; i < banyakTodo; i++)
+			{
+				todo[i] = todo[i + 1];
+				todo[i].id -= 1;
+			}
+
+			banyakTodo--;
+			writeFiles(todo, banyakTodo);
+
+			cout << "\n"
+					 << "Todo telah dihapus! \n";
+			pressAnyKey();
+
 			break;
+		}
 
 		case '4':
 		{
@@ -231,7 +257,6 @@ int main()
 			isExit = 1;
 			break;
 		}
-		system(CLEAR);
 	} while (isExit != 1);
 
 	cout << "Terima kasih telah menggunakan program kami.";
@@ -328,14 +353,14 @@ void addTodo(int jml)
 	cout << "Due Date [DD/MM/YYY]: ";
 	cin >> todo.dueDate;
 
-	addToFile(todo);
+	writeFile(todo);
 
 	cout << "\n"
 			 << "Berhasil menambahkan todo! \n";
 	pressAnyKey();
 }
 
-void addToFile(InfoTodo todo)
+void writeFile(InfoTodo todo)
 {
 	string fileName = "rafli.txt"; // Temporary
 
@@ -359,7 +384,7 @@ void addToFile(InfoTodo todo)
 		cout << "Todo masih kosong. \n";
 }
 
-void addFiles(InfoTodo todo[], int jml)
+void writeFiles(InfoTodo todo[], int jml)
 {
 	int i;
 	string fileName = "rafli.txt"; // Temporary
@@ -452,7 +477,7 @@ void editTodo(InfoTodo todo[], int id, int jml)
 		break;
 	}
 
-	addFiles(todo, jml);
+	writeFiles(todo, jml);
 }
 
 void sortByDate(InfoTodo todo[], int jml, string tglStr[])
