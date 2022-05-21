@@ -49,11 +49,11 @@ int *getDateInt(string date, int indeks);
 int strToInt(string str);
 
 // Manipulasi String
+char checkMark(bool status);
 string replaceSpasi(string str);
 string replaceHyphen(string str);
 
 // Misc
-string mark(bool status);
 void pressAnyKey();
 
 int main()
@@ -208,7 +208,7 @@ int main()
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
 					ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-					ofs << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
+					ofs << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
 					ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
@@ -250,7 +250,7 @@ void readTodo(InfoTodo todo[], int jml, int id)
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
 		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
@@ -274,7 +274,7 @@ void readTodoSearch(InfoTodo todo[], int jml, int searchRes[])
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[searchRes[i]].startDate;
 		cout << "|" << setiosflags(ios::left) << setw(15) << todo[searchRes[i]].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[searchRes[i]].selesai) << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[searchRes[i]].selesai) << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
@@ -707,21 +707,14 @@ string replaceHyphen(string str)
 	return str;
 }
 
+char checkMark(bool status)
+{
+	return status ? 'v' : 'x';
+}
+
 void pressAnyKey()
 {
 	cout << "[Press any key to continue.]";
 	getch();
 	system(CLEAR);
-}
-
-string mark(bool status)
-{
-	if (status == true)
-	{
-		return "v";
-	}
-	else
-	{
-		return "incomplete";
-	}
 }
