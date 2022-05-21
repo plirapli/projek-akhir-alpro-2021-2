@@ -21,8 +21,6 @@ struct InfoTodo
 	string startDate, dueDate;
 };
 
-InfoTodo todo[100];
-
 // CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
 void readTodoSearch(InfoTodo todo[], int jml, int searchRes[]);
@@ -36,6 +34,7 @@ void addFiles(InfoTodo todo[], int jml);	// Write multiple files
 
 // Sorting
 void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
+void sortByStatus(InfoTodo todo[], int jml);
 void sorting(InfoTodo todo[], int size, int sorter[]);
 
 // Searching
@@ -54,8 +53,8 @@ string replaceSpasi(string str);
 string replaceHyphen(string str);
 
 // Misc
-void pressAnyKey();
 string mark(bool status);
+void pressAnyKey();
 
 int main()
 {
@@ -112,6 +111,12 @@ int main()
 		case '4':
 		{
 			string tglStr[100];
+			InfoTodo sortedTodo[100];
+
+			/* Mengcloning struct yang asli ke struct baru
+				 yang akan digunakan untuk sorting */
+			for (int i = 0; i < banyakTodo; i++)
+				sortedTodo[i] = todo[i];
 
 			cout << "Sorting berdasarkan : " << endl;
 			cout << "Cari berdasarkan: \n"
@@ -130,7 +135,7 @@ int main()
 					// Tanggal yang masih berbentuk string
 					tglStr[i] = todo[i].startDate;
 
-				sortByDate(todo, banyakTodo, tglStr);
+				sortByDate(sortedTodo, banyakTodo, tglStr);
 				break;
 
 			case '2':
@@ -138,10 +143,11 @@ int main()
 					// Tanggal yang masih berbentuk string
 					tglStr[i] = todo[i].dueDate;
 
-				sortByDate(todo, banyakTodo, tglStr);
+				sortByDate(sortedTodo, banyakTodo, tglStr);
 				break;
 
 			case '3':
+				sortByStatus(sortedTodo, banyakTodo);
 				break;
 
 			default:
@@ -187,8 +193,7 @@ int main()
 			cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
 			cout << "Please wait..." << endl
 					 << endl;
-			system("pause");
-			system("cls");
+			pressAnyKey();
 			ofstream ofs("export.txt");
 
 			if (ofs.is_open())
@@ -218,7 +223,7 @@ int main()
 				cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
 				cout << "Terima kasih telah menggunakan program kami";
 			}
-			system("pause");
+			pressAnyKey();
 			break;
 		}
 
@@ -452,14 +457,7 @@ void editTodo(InfoTodo todo[], int id, int jml)
 
 void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 {
-	InfoTodo sortedTodo[100];
 	int tglBaru[100];
-
-	/* Mengcloning struct yang asli ke struct baru
-				 yang akan digunakan untuk sorting
-			 */
-	for (int i = 0; i < jml; i++)
-		sortedTodo[i] = todo[i];
 
 	for (int i = 0; i < jml; i++)
 	{
@@ -471,8 +469,22 @@ void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 
 	sorting(todo, jml, tglBaru);
 	readTodo(todo, jml);
+	pressAnyKey();
+}
 
-	system("pause");
+void sortByStatus(InfoTodo todo[], int jml)
+{
+	/* Variabel untuk menyimpan kumpulan status yang telah
+		 dikonversi ke bentuk integer
+	 */
+	int status[100];
+
+	for (int i = 0; i < jml; i++)
+		status[i] = (todo[i].selesai) ? 1 : 0;
+
+	sorting(todo, jml, status);
+	readTodo(todo, jml);
+	pressAnyKey();
 }
 
 void sorting(InfoTodo todo[], int size, int sorter[])
@@ -545,10 +557,8 @@ void searchById(InfoTodo todo[], int jml)
 		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
 
 		if (cariUlang == 'y' || cariUlang == 'Y')
-		{
-			system("pause");
-			system(CLEAR);
-		}
+			pressAnyKey();
+
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
@@ -706,10 +716,9 @@ void pressAnyKey()
 
 string mark(bool status)
 {
-	int i;
 	if (status == true)
 	{
-		return "vvv";
+		return "v";
 	}
 	else
 	{
