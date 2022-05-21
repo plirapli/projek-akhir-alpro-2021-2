@@ -21,6 +21,8 @@ struct InfoTodo
 	string startDate, dueDate;
 };
 
+InfoTodo todo[100];
+
 // CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
 void readTodoSearch(InfoTodo todo[], int jml, int searchRes[]);
@@ -33,7 +35,7 @@ void addToFile(InfoTodo todo);						// Write single file
 void addFiles(InfoTodo todo[], int jml);	// Write multiple files
 
 // Sorting
-void sorting(int array[], int size);
+void sorting(int array[][2], int size);
 
 // Searching
 void searchById(InfoTodo todo[], int jml);
@@ -44,7 +46,7 @@ int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
 // Fungsi buat Tanggal
 string getCurrentTime();
 string numMonth(string month);
-int *getDateInt(string date);
+int *getDateInt(string date,  int indeks);
 int strToInt(string str);
 
 // Manipulasi String
@@ -53,9 +55,11 @@ string replaceHyphen(string str);
 
 // Misc
 void pressAnyKey();
+string mark(bool status);
 
 int main()
 {
+	int pilihSort, i;
 	InfoTodo todo[100];
 
 	int banyakTodo = 0, idTodo;
@@ -108,20 +112,83 @@ int main()
 
 		case '4':
 		{
-			// Tanggal yang masih berbentuk string
-			string tglStr = getCurrentTime();
-
-			// Tanggal yang sudah berbentuk array of integer
-			int *tglInt = getDateInt(tglStr);
-
-			cout << "tgl (string): " << tglStr << "\n";
-			cout << "tgl (int): ";
-			for (int i = 0; i < 3; i++)
-				cout << tglInt[i] << " ";
-
-			break;
+			int tglBaru [100][2];
+			InfoTodo todoBaru[100];
+			cout << "Sorting berdasarkan : " << endl;
+			cout << "Cari berdasarkan: \n"
+			 << "[1] Start Date \n"
+			 << "[2] Due Date \n"
+			 << "[3] Status\n"
+			 << "[...] Kembali \n"
+			 << "Pilih > ";
+			cin >> pilihSort;
+			system(CLEAR);
+			switch (pilihSort) {
+				case 1 :
+				for (int j = 0; j < banyakTodo; j++) {
+					// Tanggal yang masih berbentuk string
+					string tglStr = todo[j].startDate;
+		
+					// Tanggal yang sudah berbentuk array of integer
+					int *tglInt = getDateInt(tglStr, j);
+					tglBaru[j][0] = (tglInt[0] + 100*tglInt[1] + 10000*tglInt[2]);
+					tglBaru[j][1] = tglInt[3];
+				}
+					sorting(tglBaru, banyakTodo);
+					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+					cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+					for (int i = 0; i < banyakTodo; i++) {
+					cout << "|" << setiosflags(ios::left) << setw(4) << todo[tglBaru[i][1]].id;
+					cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].judul;
+					cout << "|" << setiosflags(ios::left) << setw(17) << todo[tglBaru[i][1]].startDate;
+					cout << "|" << setiosflags(ios::left) << setw(15) << todo[tglBaru[i][1]].dueDate;
+					cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[tglBaru[i][1]].selesai) << "|" << endl;
+					cout << "|" << setiosflags(ios::left) << setw(4) << " ";
+					cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].isi;
+					cout << "|" << setiosflags(ios::left) << setw(17) << " ";
+					cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+					cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+				}
+				cout << endl;
+					break;
+				case 2 : 
+				for (int j = 0; j < banyakTodo; j++) {
+					
+					// Tanggal yang masih berbentuk string
+					string tglStr = todo[j].dueDate;
+		
+					// Tanggal yang sudah berbentuk array of integer
+					int *tglInt = getDateInt(tglStr, j);
+					tglBaru[j][0] = (tglInt[0] + 100*tglInt[1] + 10000*tglInt[2]);
+					tglBaru[j][1] = tglInt[3];
+				}
+				sorting(tglBaru, banyakTodo);
+				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+				cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+				for (int i = 0; i < banyakTodo; i++) {
+				cout << "|" << setiosflags(ios::left) << setw(4) << todo[tglBaru[i][1]].id;
+				cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].judul;
+				cout << "|" << setiosflags(ios::left) << setw(17) << todo[tglBaru[i][1]].startDate;
+				cout << "|" << setiosflags(ios::left) << setw(15) << todo[tglBaru[i][1]].dueDate;
+				cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[tglBaru[i][1]].selesai) << "|" << endl;
+				cout << "|" << setiosflags(ios::left) << setw(4) << " ";
+				cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].isi;
+				cout << "|" << setiosflags(ios::left) << setw(17) << " ";
+				cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+				cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+				}
+				cout << endl;
+				system ("pause");
+				break; 
+			case 3 : 
+				break;
+			}
 		}
-
+		break;
 		case '5':
 		{
 			cout << "Cari berdasarkan: \n"
@@ -165,22 +232,23 @@ int main()
 
 			if (ofs.is_open())
 			{
-				ofs << " --------------------------------------------------------------------------------------------------------" << endl;
-				ofs << "| ID |                             TO - DO                             |    Input Date   |    Due Date   |" << endl;
-				ofs << " --------------------------------------------------------------------------------------------------------" << endl;
+				ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+				ofs << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+				ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 
 				for (int i = 0; i < banyakTodo; i++)
 				{
 					ofs << "|" << setiosflags(ios::left) << setw(4) << i + 1;
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-					ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate << "|" << endl;
+					ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
+					ofs << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
 					ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
-					ofs << "|" << setiosflags(ios::left) << setw(15) << " "
-							<< "|" << endl;
-					ofs << " --------------------------------------------------------------------------------------------------------" << endl;
+					ofs << "|" << setiosflags(ios::left) << setw(15) << " ";
+					ofs << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+					ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 				}
 
 				ofs.close();
@@ -188,7 +256,7 @@ int main()
 				cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
 				cout << "Terima kasih telah menggunakan program kami";
 			}
-
+			system ("pause");
 			break;
 		}
 
@@ -205,44 +273,46 @@ int main()
 
 void readTodo(InfoTodo todo[], int jml, int id)
 {
-	cout << " --------------------------------------------------------------------------------------------------------" << endl;
-	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |" << endl;
-	cout << " --------------------------------------------------------------------------------------------------------" << endl;
+	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 
 	for (int i = id; i < jml; i++)
 	{
 		cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
+		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(15) << " "
-				 << "|" << endl;
-		cout << " --------------------------------------------------------------------------------------------------------" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+		cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 	}
 	cout << "\n";
 }
 
 void readTodoSearch(InfoTodo todo[], int jml, int searchRes[])
 {
-	cout << " --------------------------------------------------------------------------------------------------------" << endl;
-	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |" << endl;
-	cout << " --------------------------------------------------------------------------------------------------------" << endl;
+	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 
 	for (int i = 1; i < jml; i++)
 	{
 		cout << "|" << setiosflags(ios::left) << setw(4) << todo[searchRes[i]].id;
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[searchRes[i]].startDate;
-		cout << "|" << setiosflags(ios::left) << setw(15) << todo[searchRes[i]].dueDate << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(15) << todo[searchRes[i]].dueDate;
+		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[searchRes[i]].selesai) << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(15) << " "
-				 << "|" << endl;
-		cout << " --------------------------------------------------------------------------------------------------------" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+		cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 	}
 	cout << "\n";
 }
@@ -416,22 +486,27 @@ void editTodo(InfoTodo todo[], int id, int jml)
 	addFiles(todo, jml);
 }
 
-void sorting(int array[], int size)
+void sorting(int array[][2], int size)
 {
-	int temp, i, j;
-
+	int temp, i, j, tempIndeks;
+	
 	for (i = 0; i < size - 1; i++)
 	{
 		for (j = 0; j < size - i - 1; j++)
 		{
-			if (array[j] > array[j + 1])
+			if (array[j][0] > array[j + 1][0])
 			{
-				temp = array[j];
-				array[j] = array[j + 1];
-				array[j + 1] = temp;
+				temp = array[j][0];
+				array[j][0] = array[j + 1][0];
+				array[j + 1][0] = temp;
+				
+				tempIndeks = array[j][1];
+				array[j][1] = array[j + 1][1];
+				array[j + 1][1] = tempIndeks;
 			}
 		}
 	}
+	
 }
 
 void searchById(InfoTodo todo[], int jml)
@@ -574,9 +649,9 @@ string numMonth(string month)
 	return "01";
 }
 
-int *getDateInt(string date)
+int *getDateInt(string date, int indeks)
 {
-	int *tgl = new int[3];
+	int *tgl = new int[4];
 
 	if (!(date.length() < 9))
 	{
@@ -588,6 +663,7 @@ int *getDateInt(string date)
 		tgl[0] = strToInt(day);
 		tgl[1] = strToInt(month);
 		tgl[2] = strToInt(year);
+		tgl[3] = indeks;
 	}
 	else
 	{
@@ -635,4 +711,13 @@ void pressAnyKey()
 	cout << "[Press any key to continue.]";
 	getch();
 	system(CLEAR);
+}
+
+string mark (bool status) {
+	int i;
+	if (status == true) {
+		return "vvv";
+	} else {
+		return "incomplete";
+	}
 }
