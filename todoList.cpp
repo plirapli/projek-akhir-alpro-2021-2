@@ -1,8 +1,8 @@
+#include <fstream>
 #include <iostream>
 #include <conio.h>
 #include <iomanip>
 #include <string>
-#include <fstream>
 
 // Ngecek OS doang
 #ifdef _WIN32
@@ -27,16 +27,18 @@ struct User
 
 // User Related
 int userLogin(User user[], int jmlUser);
-void userRegister(User user[], int &jmlUser);
+void userRegister(User user[], int jmlUser);
+void readFileUser(User user[], int &jmlUser); // Read files (user)
+void writeFileUser(User user[], int jmlUser); // Write files (user)
 
 // Todo CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
 void addTodo(InfoTodo todo[], int jml, string user);
 void editTodo(InfoTodo todo[], int id, int jml, string user);
 
-// R/W Files
-void readFile(InfoTodo todo[], int &jml, string user);	// Read files
-void writeFiles(InfoTodo todo[], int jml, string user); // Write multiple files
+// R/W Files Todo
+void readFile(InfoTodo todo[], int &jml, string user); // Read files
+void writeFile(InfoTodo todo[], int jml, string user); // Write files
 
 // Sorting
 void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
@@ -68,10 +70,6 @@ int main()
 	User user[100];
 	InfoTodo todo[100];
 
-	// Temporary User (Only for testing)
-	user[0].username = "mrafli";
-	user[0].password = "12345";
-
 	int pilihSort, i;
 
 	int jmlUser = 1, idUser;
@@ -85,6 +83,9 @@ int main()
 		// Login
 		do
 		{
+			system(CLEAR);
+			readFileUser(user, jmlUser);
+
 			cout << "Selamat Datang! \n"
 					 << "[1] Login \n"
 					 << "[2] Daftar \n"
@@ -178,7 +179,7 @@ int main()
 				}
 
 				banyakTodo--;
-				writeFiles(todo, banyakTodo, userName);
+				writeFile(todo, banyakTodo, userName);
 
 				cout << "\n"
 						 << "Todo telah dihapus! \n";
@@ -362,15 +363,13 @@ int userLogin(User user[], int jmlUser)
 	return indexUser;
 }
 
-void userRegister(User user[], int &jmlUser)
+void userRegister(User user[], int jmlUser)
 {
-	bool repeat = 1;
+	bool repeat = 1, isExist = 0;
+	string username, passwd;
 
 	do
 	{
-		bool isExist = 0;
-		string username, passwd;
-
 		cout << "[Daftar] \n"
 				 << "Masukkan username: ";
 		cin >> username;
@@ -383,7 +382,6 @@ void userRegister(User user[], int &jmlUser)
 			if (username == user[i].username)
 			{
 				isExist = 1;
-				repeat = 1;
 				break;
 			}
 		}
@@ -392,6 +390,9 @@ void userRegister(User user[], int &jmlUser)
 		{
 			user[jmlUser].username = username;
 			user[jmlUser].password = passwd;
+			jmlUser++;
+
+			writeFileUser(user, jmlUser);
 			repeat = 0;
 
 			cout << "User " + username + " telah berhasil didaftarkan! \n";
@@ -401,8 +402,45 @@ void userRegister(User user[], int &jmlUser)
 
 		pressAnyKey();
 	} while (repeat);
+}
 
-	jmlUser++;
+void readFileUser(User user[], int &jmlUser)
+{
+	string fileName = "user.txt"; // Temporary
+
+	ifstream myFile(fileName);
+	jmlUser = 0;
+
+	if (myFile.is_open())
+	{
+		int i = jmlUser;
+		while (!myFile.eof())
+		{
+			myFile >> user[i].username >> user[i].password;
+			i++;
+		}
+
+		jmlUser += i - 1;
+		myFile.close();
+	}
+	else
+		cout << "Gagal membuka file. \n";
+}
+
+void writeFileUser(User user[], int jmlUser)
+{
+	string fileName = "user.txt"; // Temporary
+
+	ofstream myFile(fileName);
+	if (myFile.is_open())
+	{
+		for (int i = 0; i < jmlUser; i++)
+			myFile << user[i].username << " " << user[i].password << "\n";
+
+		myFile.close();
+	}
+	else
+		cout << "Gagal membuka file. \n";
 }
 
 void readTodo(InfoTodo todo[], int jml, int id)
@@ -480,11 +518,11 @@ void addTodo(InfoTodo todo[], int jml, string user)
 
 	jml++;
 
-	writeFiles(todo, jml, user);
+	writeFile(todo, jml, user);
 	pressAnyKey();
 }
 
-void writeFiles(InfoTodo todo[], int jml, string user)
+void writeFile(InfoTodo todo[], int jml, string user)
 {
 	int i;
 	string fileName = "./todo/" + user + ".txt"; // Temporary
@@ -577,7 +615,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		break;
 	}
 
-	writeFiles(todo, jml, user);
+	writeFile(todo, jml, user);
 }
 
 // fungsi sorting berdasarkan tanggal
