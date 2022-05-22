@@ -1,8 +1,8 @@
+#include <fstream>
 #include <iostream>
 #include <conio.h>
 #include <iomanip>
 #include <string>
-#include <fstream>
 
 // Ngecek OS doang
 #ifdef _WIN32
@@ -16,29 +16,29 @@ using namespace std;
 struct InfoTodo
 {
 	int id;
-	string judul, isi;
 	bool selesai = 0;
-	string startDate, dueDate;
+	string judul, isi, startDate, dueDate;
 };
 
 struct User
 {
 	string username, password;
-	// InfoTodo todo[100];
 };
 
 // User Related
 int userLogin(User user[], int jmlUser);
-void userRegister(User user[], int &jmlUser);
+void userRegister(User user[], int jmlUser);
+void readFileUser(User user[], int &jmlUser); // Read files (user)
+void writeFileUser(User user[], int jmlUser); // Write files (user)
 
 // Todo CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
 void addTodo(InfoTodo todo[], int jml, string user);
 void editTodo(InfoTodo todo[], int id, int jml, string user);
 
-// R/W Files
-void readFile(InfoTodo todo[], int &jml, string user);	// Read files
-void writeFiles(InfoTodo todo[], int jml, string user); // Write multiple files
+// R/W Files Todo
+void readFile(InfoTodo todo[], int &jml, string user); // Read files
+void writeFile(InfoTodo todo[], int jml, string user); // Write files
 
 // Sorting
 void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
@@ -49,16 +49,16 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
-int binarySearch(InfoTodo todo[], int awal, int akgir, int num); // recursive binary search
+int binarySearch(InfoTodo todo[], int awal, int akgir, int num);
 
 // Fungsi buat Tanggal
-string getCurrentTime();
-string numMonth(string month);
-int *getDateInt(string date, int indeks);
-int strToInt(string str);
+string getCurrentTime();									// Mengambil waktu saat ini
+string numMonth(string month);						// Mengkonversi nama bulan menjadi angka
+int *getDateInt(string date, int indeks); // Mengkonversi string tanggal ke bentuk integer
+int strToInt(string str);									// Mengkonversi string ke integer
 
 // Manipulasi String
-char checkMark(bool status);
+char checkMark(bool status); // Mengkonversi bool ke tanda "x" atau "v" pada field status
 string replaceSpasi(string str);
 string replaceHyphen(string str);
 
@@ -70,16 +70,11 @@ int main()
 	User user[100];
 	InfoTodo todo[100];
 
-	// Temporary User (Only for testing)
-	user[0].username = "mrafli";
-	user[0].password = "12345";
-
-	int pilihSort, i;
-
 	int jmlUser = 1, idUser;
 	int banyakTodo = 0, idTodo;
 	bool repeatMenu = 1, repeatMainMenu = 1, isExit = 0;
-	char cariUlang, pilihanMenu;
+
+	char pilihanMenu;
 	string userName;
 
 	do
@@ -87,23 +82,27 @@ int main()
 		// Login
 		do
 		{
+			system(CLEAR);
+			readFileUser(user, jmlUser);
+
 			cout << "Selamat Datang! \n"
 					 << "[1] Login \n"
 					 << "[2] Daftar \n"
 					 << "[...] Keluar \n"
 					 << "Pilih > ";
 			cin >> pilihanMenu;
-			system(CLEAR);
 
 			switch (pilihanMenu)
 			{
 			case '1':
+				system(CLEAR);
 				idUser = userLogin(user, jmlUser);
 				repeatMenu = idUser != -1 ? 0 : 1;
 				repeatMainMenu = 1;
 				break;
 
 			case '2':
+				system(CLEAR);
 				userRegister(user, jmlUser);
 				repeatMenu = 1;
 				repeatMainMenu = 1;
@@ -140,57 +139,99 @@ int main()
 			cout << "Pilihan menu: ";
 			cin >> pilihanMenu;
 
-			system(CLEAR);
-
 			switch (pilihanMenu)
 			{
 			case '1':
+				system(CLEAR);
 				addTodo(todo, banyakTodo, userName);
 				break;
 
 			case '2':
 			{
-				int id;
-
-				readTodo(todo, banyakTodo);
-
-				cout << "Masukkan Id: ";
-				cin >> id;
 				system(CLEAR);
+				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
+				{
+					int id;
+					bool repeat = 1;
 
-				// Menampilkan Todo
-				readTodo(todo, id, id - 1);
-				editTodo(todo, id, banyakTodo, userName);
+					do
+					{
+						readTodo(todo, banyakTodo); // Menampilkan semua todo
+
+						cout << "Masukkan Id: ";
+						cin >> id;
+
+						if (id > 0 && id <= banyakTodo)
+						{
+							system(CLEAR);
+							readTodo(todo, id, id - 1); // Menampilkan todo yang dicari
+							editTodo(todo, id, banyakTodo, userName);
+							repeat = 0; // Menghentikan perulangan
+						}
+						else
+						{
+							cout << "Todo tidak ditemukan \n\n";
+							pressAnyKey();
+						}
+					} while (repeat);
+				}
+				else
+				{
+					cout << "Todo masih kosong! \n\n";
+					pressAnyKey();
+				}
 				break;
 			}
 
 			case '3':
 			{
-				int inputId;
-				readTodo(todo, banyakTodo);
-
-				cout << "Masukkan Nomor: ";
-				cin >> inputId;
-
-				// Menaikkan baris
-				for (int i = inputId - 1; i < banyakTodo; i++)
+				system(CLEAR);
+				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
 				{
-					todo[i] = todo[i + 1];
-					todo[i].id -= 1;
+					int inputId;
+					bool repeat = 1;
+
+					do
+					{
+						readTodo(todo, banyakTodo);
+
+						cout << "Masukkan Nomor: ";
+						cin >> inputId;
+						cout << "\n";
+
+						if (inputId > 0 && inputId <= banyakTodo)
+						{
+							// Menaikkan baris
+							for (int i = inputId - 1; i < banyakTodo; i++)
+							{
+								todo[i] = todo[i + 1];
+								todo[i].id -= 1;
+							}
+
+							banyakTodo--;													 // Mengurangi jumlah todo
+							writeFile(todo, banyakTodo, userName); // Melakukan overwrite terhadap file
+							repeat = 0;														 // Menghentikan perulangan
+
+							cout << "Todo telah dihapus! \n\n";
+						}
+						else
+							cout << "Todo tidak ditemukan \n\n";
+
+						pressAnyKey();
+					} while (repeat);
 				}
-
-				banyakTodo--;
-				writeFiles(todo, banyakTodo, userName);
-
-				cout << "\n"
-						 << "Todo telah dihapus! \n";
-				pressAnyKey();
-
+				else
+				{
+					cout << "Todo masih kosong \n\n";
+					pressAnyKey();
+				}
 				break;
 			}
 
 			case '4':
 			{
+				system(CLEAR);
+
 				string tglStr[100];
 				InfoTodo sortedTodo[100];
 
@@ -239,6 +280,7 @@ int main()
 
 			case '5':
 			{
+				system(CLEAR);
 				cout << "Cari berdasarkan: \n"
 						 << "[1] ID \n"
 						 << "[2] Start Date \n"
@@ -271,6 +313,7 @@ int main()
 
 			case '6':
 			{
+				system(CLEAR);
 				cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
 				cout << "Please wait..." << endl
 						 << endl;
@@ -309,6 +352,9 @@ int main()
 			}
 
 			case '7':
+				cout << "\n"
+						 << "Logout berhasil. \n\n";
+				pressAnyKey();
 				repeatMainMenu = 0;
 				break;
 
@@ -320,7 +366,9 @@ int main()
 		}
 	} while (!isExit);
 
-	cout << "Terima kasih telah menggunakan program kami.";
+	cout << "\n"
+			 << "Terima kasih telah menggunakan program kami. \n\n";
+	pressAnyKey();
 	return 0;
 }
 
@@ -352,11 +400,14 @@ int userLogin(User user[], int jmlUser)
 
 		if (indexUser == -1)
 		{
-			cout << "Username atau password anda salah! \n";
+			cout << "Username atau password anda salah! \n\n";
 			loginAttempt++;
+
+			if (loginAttempt >= 3) // Melakukan pengecekan apabila salah > 3x
+				cout << "Anda telah salah memasukkan sebanyak 3x! \n\n";
 		}
 		else
-			cout << "Login berhasil! \n";
+			cout << "Login berhasil! \n\n";
 
 		pressAnyKey();
 	} while (repeat && loginAttempt < 3);
@@ -364,15 +415,16 @@ int userLogin(User user[], int jmlUser)
 	return indexUser;
 }
 
-void userRegister(User user[], int &jmlUser)
+void userRegister(User user[], int jmlUser)
 {
-	bool repeat = 1;
+	bool repeat = 1, isExist;
+	string username, passwd;
 
 	do
 	{
-		bool isExist = 0;
-		string username, passwd;
+		isExist = 0;
 
+		// User mendaftarkan username & password
 		cout << "[Daftar] \n"
 				 << "Masukkan username: ";
 		cin >> username;
@@ -385,26 +437,68 @@ void userRegister(User user[], int &jmlUser)
 			if (username == user[i].username)
 			{
 				isExist = 1;
-				repeat = 1;
 				break;
 			}
 		}
 
-		if (!isExist)
+		if (!isExist) // Jika user berhasil didaftarkan
 		{
+			string fileName = "./todo/" + username + ".txt";
+
 			user[jmlUser].username = username;
 			user[jmlUser].password = passwd;
+			jmlUser++;
+
+			ofstream myFile(fileName);		// Membuat file kosong untuk nantinya diisi todo list
+			writeFileUser(user, jmlUser); // Melakukan write ke dalam files
 			repeat = 0;
 
-			cout << "User " + username + " telah berhasil didaftarkan! \n";
+			cout << "User " + username + " telah berhasil didaftarkan! \n\n";
 		}
-		else
-			cout << "User " + username + " telah terpakai! \n";
+		else // Jika username telah terpakai
+			cout << "User " + username + " telah terpakai! \n\n";
 
 		pressAnyKey();
 	} while (repeat);
+}
 
-	jmlUser++;
+void readFileUser(User user[], int &jmlUser)
+{
+	string fileName = "user.txt"; // Temporary
+
+	ifstream myFile(fileName);
+	jmlUser = 0;
+
+	if (myFile.is_open())
+	{
+		int i = jmlUser;
+		while (!myFile.eof())
+		{
+			myFile >> user[i].username >> user[i].password;
+			i++;
+		}
+
+		jmlUser += i - 1;
+		myFile.close();
+	}
+	else
+		cout << "Gagal membuka file. \n";
+}
+
+void writeFileUser(User user[], int jmlUser)
+{
+	string fileName = "user.txt"; // Temporary
+
+	ofstream myFile(fileName);
+	if (myFile.is_open())
+	{
+		for (int i = 0; i < jmlUser; i++)
+			myFile << user[i].username << " " << user[i].password << "\n";
+
+		myFile.close();
+	}
+	else
+		cout << "Gagal membuka file. \n";
 }
 
 void readTodo(InfoTodo todo[], int jml, int id)
@@ -482,11 +576,11 @@ void addTodo(InfoTodo todo[], int jml, string user)
 
 	jml++;
 
-	writeFiles(todo, jml, user);
+	writeFile(todo, jml, user);
 	pressAnyKey();
 }
 
-void writeFiles(InfoTodo todo[], int jml, string user)
+void writeFile(InfoTodo todo[], int jml, string user)
 {
 	int i;
 	string fileName = "./todo/" + user + ".txt"; // Temporary
@@ -540,8 +634,8 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].judul = judul;
 
-		cout << "\n\n";
-		cout << "Berhasil mengubah judul! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah judul! \n\n";
 		pressAnyKey();
 		break;
 
@@ -552,8 +646,8 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].isi = isi;
 
-		cout << "\n\n";
-		cout << "Berhasil mengubah isi! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah isi! \n\n";
 		pressAnyKey();
 		break;
 
@@ -564,14 +658,15 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].dueDate = dueDate;
 
-		cout << "\n\n";
-		cout << "Berhasil mengubah tanggal! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah tanggal! \n\n";
 		pressAnyKey();
 		break;
 
 	case '4':
 		todo[id - 1].selesai = !status;
-		cout << "Berhasil mengubah status Todo! \n";
+		cout << "\n"
+				 << "Berhasil mengubah status Todo! \n\n";
 		pressAnyKey();
 		break;
 
@@ -579,10 +674,10 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		break;
 	}
 
-	writeFiles(todo, jml, user);
+	writeFile(todo, jml, user);
 }
 
-// fungsi sorting berdasarkan tanggal
+// Fungsi sorting berdasarkan tanggal
 void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 {
 	int tglBaru[100];
@@ -600,7 +695,7 @@ void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 	pressAnyKey();
 }
 
-// fungsi sorting berdsarkan status
+// Fungsi sorting berdsarkan status
 void sortByStatus(InfoTodo todo[], int jml)
 {
 	/* Variabel untuk menyimpan kumpulan status yang telah
@@ -616,7 +711,7 @@ void sortByStatus(InfoTodo todo[], int jml)
 	pressAnyKey();
 }
 
-// fungsi sorting
+// Fungsi sorting
 void sorting(InfoTodo todo[], int size, int sorter[])
 {
 	InfoTodo tempStruct;
@@ -642,32 +737,26 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 	}
 }
 
+// Fungsi searching menggunakan binary search (rekursif)
 int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 {
 	if (awal <= akhir)
 	{
 		int tengah = (awal + akhir) / 2;
 		if (num == todo[tengah].id)
-		{
 			return tengah;
-		}
 		else if (num < todo[tengah].id)
-		{
 			return binarySearch(todo, awal, tengah - 1, num); // recursive
-		}
 		else
-		{
 			return binarySearch(todo, tengah + 1, akhir, num); // recursive
-		}
 	}
 	return -1;
 }
 
-// fungsi searching berdasarkan id
+// Fungsi searching berdasarkan id
 void searchById(InfoTodo todo[], int jml)
 {
-	int idTodo, i;
-	bool found;
+	int idTodo;
 	char cariUlang;
 
 	do
@@ -675,8 +764,8 @@ void searchById(InfoTodo todo[], int jml)
 		cout << "Masukkan ID To-Do yang ingin dicari : ";
 		cin >> idTodo;
 
-		int hasil = binarySearch(todo, 0, jml - 1, idTodo); // hasil disimpan berupa indeks
-		if (!(hasil == -1))																	// output data yang ditemukan
+		int hasil = binarySearch(todo, 0, jml - 1, idTodo); // Hasil disimpan berupa indeks
+		if (hasil != -1)																		// Output data yang ditemukan
 		{
 			cout << endl;
 			cout << "Data " << idTodo << " ditemukan!" << endl;
@@ -688,7 +777,7 @@ void searchById(InfoTodo todo[], int jml)
 		else
 			cout << "Data tidak ditemukan!" << endl;
 
-		// perulangan untuk mencari data lagi
+		// Perulangan untuk mencari data lagi
 		do
 		{
 			cout << "\nApakah anda ingin mencari data lagi (y/n)? ";
@@ -700,14 +789,12 @@ void searchById(InfoTodo todo[], int jml)
 		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
 
 		if (cariUlang == 'y' || cariUlang == 'Y')
-		{
-			system("pause");
 			system(CLEAR);
-		}
+
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
-// fungsi searching berdasarkan tanggal
+// Fungsi searching berdasarkan tanggal
 void searchByDate(InfoTodo todo[], int jml, bool startDate)
 {
 	InfoTodo foundTodo[100];
@@ -731,6 +818,7 @@ void searchByDate(InfoTodo todo[], int jml, bool startDate)
 	pressAnyKey();
 }
 
+// Fungsi untuk menampilkan 2 data atau lebih
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 {
 	int *res = new int[100];
@@ -858,7 +946,6 @@ string replaceHyphen(string str)
 	return str;
 }
 
-// fungsi yang memberi tanda pada field status
 char checkMark(bool status)
 {
 	return status ? 'v' : 'x';
