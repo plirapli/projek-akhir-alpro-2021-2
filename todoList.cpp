@@ -70,12 +70,11 @@ int main()
 	User user[100];
 	InfoTodo todo[100];
 
-	int pilihSort, i;
-
 	int jmlUser = 1, idUser;
 	int banyakTodo = 0, idTodo;
 	bool repeatMenu = 1, repeatMainMenu = 1, isExit = 0;
-	char cariUlang, pilihanMenu;
+
+	char pilihanMenu;
 	string userName;
 
 	do
@@ -92,17 +91,18 @@ int main()
 					 << "[...] Keluar \n"
 					 << "Pilih > ";
 			cin >> pilihanMenu;
-			system(CLEAR);
 
 			switch (pilihanMenu)
 			{
 			case '1':
+				system(CLEAR);
 				idUser = userLogin(user, jmlUser);
 				repeatMenu = idUser != -1 ? 0 : 1;
 				repeatMainMenu = 1;
 				break;
 
 			case '2':
+				system(CLEAR);
 				userRegister(user, jmlUser);
 				repeatMenu = 1;
 				repeatMainMenu = 1;
@@ -139,17 +139,17 @@ int main()
 			cout << "Pilihan menu: ";
 			cin >> pilihanMenu;
 
-			system(CLEAR);
-
 			switch (pilihanMenu)
 			{
 			case '1':
+				system(CLEAR);
 				addTodo(todo, banyakTodo, userName);
 				break;
 
 			case '2':
 			{
-				if (banyakTodo > 0)
+				system(CLEAR);
+				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
 				{
 					int id;
 					bool repeat = 1;
@@ -185,7 +185,8 @@ int main()
 
 			case '3':
 			{
-				if (banyakTodo > 0)
+				system(CLEAR);
+				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
 				{
 					int inputId;
 					bool repeat = 1;
@@ -229,6 +230,8 @@ int main()
 
 			case '4':
 			{
+				system(CLEAR);
+
 				string tglStr[100];
 				InfoTodo sortedTodo[100];
 
@@ -277,6 +280,7 @@ int main()
 
 			case '5':
 			{
+				system(CLEAR);
 				cout << "Cari berdasarkan: \n"
 						 << "[1] ID \n"
 						 << "[2] Start Date \n"
@@ -309,6 +313,7 @@ int main()
 
 			case '6':
 			{
+				system(CLEAR);
 				cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
 				cout << "Please wait..." << endl
 						 << endl;
@@ -347,6 +352,9 @@ int main()
 			}
 
 			case '7':
+				cout << "\n"
+						 << "Logout berhasil. \n\n";
+				pressAnyKey();
 				repeatMainMenu = 0;
 				break;
 
@@ -358,7 +366,9 @@ int main()
 		}
 	} while (!isExit);
 
-	cout << "Terima kasih telah menggunakan program kami.";
+	cout << "\n"
+			 << "Terima kasih telah menggunakan program kami. \n\n";
+	pressAnyKey();
 	return 0;
 }
 
@@ -390,11 +400,14 @@ int userLogin(User user[], int jmlUser)
 
 		if (indexUser == -1)
 		{
-			cout << "Username atau password anda salah! \n";
+			cout << "Username atau password anda salah! \n\n";
 			loginAttempt++;
+
+			if (loginAttempt >= 3) // Melakukan pengecekan apabila salah > 3x
+				cout << "Anda telah salah memasukkan sebanyak 3x! \n\n";
 		}
 		else
-			cout << "Login berhasil! \n";
+			cout << "Login berhasil! \n\n";
 
 		pressAnyKey();
 	} while (repeat && loginAttempt < 3);
@@ -621,8 +634,8 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].judul = judul;
 
-		cout << "\n";
-		cout << "Berhasil mengubah judul! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah judul! \n\n";
 		pressAnyKey();
 		break;
 
@@ -633,8 +646,8 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].isi = isi;
 
-		cout << "\n";
-		cout << "Berhasil mengubah isi! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah isi! \n\n";
 		pressAnyKey();
 		break;
 
@@ -645,15 +658,15 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].dueDate = dueDate;
 
-		cout << "\n";
-		cout << "Berhasil mengubah tanggal! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah tanggal! \n\n";
 		pressAnyKey();
 		break;
 
 	case '4':
 		todo[id - 1].selesai = !status;
-		cout << "\n";
-		cout << "Berhasil mengubah status Todo! \n\n";
+		cout << "\n"
+				 << "Berhasil mengubah status Todo! \n\n";
 		pressAnyKey();
 		break;
 
@@ -743,8 +756,7 @@ int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 // Fungsi searching berdasarkan id
 void searchById(InfoTodo todo[], int jml)
 {
-	int idTodo, i;
-	bool found;
+	int idTodo;
 	char cariUlang;
 
 	do
@@ -752,8 +764,8 @@ void searchById(InfoTodo todo[], int jml)
 		cout << "Masukkan ID To-Do yang ingin dicari : ";
 		cin >> idTodo;
 
-		int hasil = binarySearch(todo, 0, jml - 1, idTodo); // hasil disimpan berupa indeks
-		if (!(hasil == -1))																	// output data yang ditemukan
+		int hasil = binarySearch(todo, 0, jml - 1, idTodo); // Hasil disimpan berupa indeks
+		if (hasil != -1)																		// Output data yang ditemukan
 		{
 			cout << endl;
 			cout << "Data " << idTodo << " ditemukan!" << endl;
@@ -765,7 +777,7 @@ void searchById(InfoTodo todo[], int jml)
 		else
 			cout << "Data tidak ditemukan!" << endl;
 
-		// perulangan untuk mencari data lagi
+		// Perulangan untuk mencari data lagi
 		do
 		{
 			cout << "\nApakah anda ingin mencari data lagi (y/n)? ";
@@ -777,10 +789,8 @@ void searchById(InfoTodo todo[], int jml)
 		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
 
 		if (cariUlang == 'y' || cariUlang == 'Y')
-		{
-			system("pause");
 			system(CLEAR);
-		}
+
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
