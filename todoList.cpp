@@ -49,16 +49,16 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
-int binarySearch(InfoTodo todo[], int awal, int akgir, int num); // recursive binary search
+int binarySearch(InfoTodo todo[], int awal, int akgir, int num);
 
 // Fungsi buat Tanggal
-string getCurrentTime();
-string numMonth(string month);
-int *getDateInt(string date, int indeks);
-int strToInt(string str);
+string getCurrentTime();									// Mengambil waktu saat ini
+string numMonth(string month);						// Mengkonversi nama bulan menjadi angka
+int *getDateInt(string date, int indeks); // Mengkonversi string tanggal ke bentuk integer
+int strToInt(string str);									// Mengkonversi string ke integer
 
 // Manipulasi String
-char checkMark(bool status);
+char checkMark(bool status); // Mengkonversi bool ke tanda "x" atau "v" pada field status
 string replaceSpasi(string str);
 string replaceHyphen(string str);
 
@@ -370,6 +370,7 @@ void userRegister(User user[], int jmlUser)
 
 	do
 	{
+		// User mendaftarkan username & password
 		cout << "[Daftar] \n"
 				 << "Masukkan username: ";
 		cin >> username;
@@ -386,18 +387,21 @@ void userRegister(User user[], int jmlUser)
 			}
 		}
 
-		if (!isExist)
+		if (!isExist) // Jika user berhasil didaftarkan
 		{
+			string fileName = "./todo/" + username + ".txt";
+
 			user[jmlUser].username = username;
 			user[jmlUser].password = passwd;
 			jmlUser++;
 
-			writeFileUser(user, jmlUser);
+			ofstream myFile(fileName);		// Membuat file kosong untuk nantinya diisi todo list
+			writeFileUser(user, jmlUser); // Melakukan write ke dalam files
 			repeat = 0;
 
 			cout << "User " + username + " telah berhasil didaftarkan! \n";
 		}
-		else
+		else // Jika username telah terpakai
 			cout << "User " + username + " telah terpakai! \n";
 
 		pressAnyKey();
@@ -618,7 +622,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 	writeFile(todo, jml, user);
 }
 
-// fungsi sorting berdasarkan tanggal
+// Fungsi sorting berdasarkan tanggal
 void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 {
 	int tglBaru[100];
@@ -636,7 +640,7 @@ void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 	pressAnyKey();
 }
 
-// fungsi sorting berdsarkan status
+// Fungsi sorting berdsarkan status
 void sortByStatus(InfoTodo todo[], int jml)
 {
 	/* Variabel untuk menyimpan kumpulan status yang telah
@@ -652,7 +656,7 @@ void sortByStatus(InfoTodo todo[], int jml)
 	pressAnyKey();
 }
 
-// fungsi sorting
+// Fungsi sorting
 void sorting(InfoTodo todo[], int size, int sorter[])
 {
 	InfoTodo tempStruct;
@@ -678,7 +682,7 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 	}
 }
 
-// fungsi searching menggunakan binary search
+// Fungsi searching menggunakan binary search (rekursif)
 int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 {
 	if (awal <= akhir)
@@ -694,7 +698,7 @@ int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 	return -1;
 }
 
-// fungsi searching berdasarkan id
+// Fungsi searching berdasarkan id
 void searchById(InfoTodo todo[], int jml)
 {
 	int idTodo, i;
@@ -738,7 +742,7 @@ void searchById(InfoTodo todo[], int jml)
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
-// fungsi searching berdasarkan tanggal
+// Fungsi searching berdasarkan tanggal
 void searchByDate(InfoTodo todo[], int jml, bool startDate)
 {
 	InfoTodo foundTodo[100];
@@ -762,6 +766,7 @@ void searchByDate(InfoTodo todo[], int jml, bool startDate)
 	pressAnyKey();
 }
 
+// Fungsi untuk menampilkan 2 data atau lebih
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 {
 	int *res = new int[100];
@@ -889,7 +894,6 @@ string replaceHyphen(string str)
 	return str;
 }
 
-// fungsi yang memberi tanda pada field status
 char checkMark(bool status)
 {
 	return status ? 'v' : 'x';
