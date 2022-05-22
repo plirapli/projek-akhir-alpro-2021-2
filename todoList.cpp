@@ -40,6 +40,7 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
+int binarySearch(InfoTodo todo[], int awal, int akgir, int num); //recursive binary search
 
 // Fungsi buat Tanggal
 string getCurrentTime();
@@ -141,7 +142,7 @@ int main()
 				 yang akan digunakan untuk sorting */
 			for (int i = 0; i < banyakTodo; i++)
 				sortedTodo[i] = todo[i];
-
+		
 			cout << "Sorting berdasarkan : " << endl;
 			cout << "Cari berdasarkan: \n"
 					 << "[1] Start Date \n"
@@ -266,23 +267,26 @@ void readTodo(InfoTodo todo[], int jml, int id)
 	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
 	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-
-	for (int i = id; i < jml; i++)
-	{
-		cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(12) << " "
-				 << "|" << endl;
-		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+	if (jml > 0) {
+		for (int i = id; i < jml; i++)
+		{
+			cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
+			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
+			cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
+			cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
+			cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
+			cout << "|" << setiosflags(ios::left) << setw(4) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
+			cout << "|" << setiosflags(ios::left) << setw(17) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+			cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+		}
+		cout << "\n";
+	} else {
+		cout << "|                                              TO-DO MASIH KOSONG                                                     |"<<endl;
+		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;  
 	}
-	cout << "\n";
 }
 
 void readFile(InfoTodo todo[], int &jml)
@@ -454,6 +458,7 @@ void editTodo(InfoTodo todo[], int id, int jml)
 	writeFiles(todo, jml);
 }
 
+//fungsi sorting berdasarkan tanggal
 void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 {
 	int tglBaru[100];
@@ -471,6 +476,7 @@ void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 	pressAnyKey();
 }
 
+//fungsi sorting berdsarkan status
 void sortByStatus(InfoTodo todo[], int jml)
 {
 	/* Variabel untuk menyimpan kumpulan status yang telah
@@ -486,6 +492,7 @@ void sortByStatus(InfoTodo todo[], int jml)
 	pressAnyKey();
 }
 
+//fungsi sorting
 void sorting(InfoTodo todo[], int size, int sorter[])
 {
 	InfoTodo tempStruct;
@@ -511,6 +518,22 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 	}
 }
 
+//fungsi binary search menggunakan rekursif binary search
+int binarySearch (InfoTodo todo[], int awal, int akhir, int num) { 
+	if (awal <= akhir) {
+		int tengah  = (awal + akhir) / 2;
+		if (num == todo[tengah].id) {
+			return tengah;
+		} else if (num < todo[tengah].id) {
+			return binarySearch (todo, awal, tengah - 1, num); //recursive
+		} else {
+			return binarySearch (todo, tengah + 1, akhir, num); //recursive
+		}
+	}
+	return -1;
+}
+
+//fungsi searching berdasarkan id
 void searchById(InfoTodo todo[], int jml)
 {
 	int idTodo, i;
@@ -521,30 +544,21 @@ void searchById(InfoTodo todo[], int jml)
 	{
 		cout << "Masukkan ID To-Do yang ingin dicari : ";
 		cin >> idTodo;
-
-		found = false;
-		i = 0;
-
-		while ((i <= jml) && !(found))
-		{
-			if (todo[i].id == idTodo)
-				found = true;
-			else
-				i++;
-		}
-
-		if (found)
+		
+		int hasil = binarySearch (todo, 0, jml-1, idTodo); //hasil disimpan berupa indeks
+		if (!(hasil == -1)) //output data yang ditemukan
 		{
 			cout << endl;
 			cout << "Data " << idTodo << " ditemukan!" << endl;
-			cout << "Input Date  : " << todo[i].startDate << endl;
-			cout << "Judul       : " << todo[i].judul << endl;
-			cout << "Isi         : " << todo[i].isi << endl;
-			cout << "Due Date    : " << todo[i].dueDate << endl;
+			cout << "Input Date  : " << todo[hasil].startDate << endl;
+			cout << "Judul       : " << todo[hasil].judul << endl;
+			cout << "Isi         : " << todo[hasil].isi << endl;
+			cout << "Due Date    : " << todo[hasil].dueDate << endl;
 		}
 		else
 			cout << "Data tidak ditemukan!" << endl;
-
+			
+		//perulangan untuk mencari data lagi
 		do
 		{
 			cout << "\nApakah anda ingin mencari data lagi (y/n)? ";
@@ -556,11 +570,14 @@ void searchById(InfoTodo todo[], int jml)
 		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
 
 		if (cariUlang == 'y' || cariUlang == 'Y')
-			pressAnyKey();
-
+		{
+			system("pause");
+			system(CLEAR);
+		}
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
+//fungsi searching berdasarkan tanggal
 void searchByDate(InfoTodo todo[], int jml, bool startDate)
 {
 	InfoTodo foundTodo[100];
@@ -711,6 +728,7 @@ string replaceHyphen(string str)
 	return str;
 }
 
+ //fungsi yang memberi tanda pada field status
 char checkMark(bool status)
 {
 	return status ? 'v' : 'x';
