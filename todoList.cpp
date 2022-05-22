@@ -149,42 +149,81 @@ int main()
 
 			case '2':
 			{
-				int id;
+				if (banyakTodo > 0)
+				{
+					int id;
+					bool repeat = 1;
 
-				readTodo(todo, banyakTodo);
+					do
+					{
+						readTodo(todo, banyakTodo); // Menampilkan semua todo
 
-				cout << "Masukkan Id: ";
-				cin >> id;
-				system(CLEAR);
+						cout << "Masukkan Id: ";
+						cin >> id;
 
-				// Menampilkan Todo
-				readTodo(todo, id, id - 1);
-				editTodo(todo, id, banyakTodo, userName);
+						if (id > 0 && id <= banyakTodo)
+						{
+							system(CLEAR);
+							readTodo(todo, id, id - 1); // Menampilkan todo yang dicari
+							editTodo(todo, id, banyakTodo, userName);
+							repeat = 0; // Menghentikan perulangan
+						}
+						else
+						{
+							cout << "Todo tidak ditemukan \n\n";
+							pressAnyKey();
+						}
+					} while (repeat);
+				}
+				else
+				{
+					cout << "Todo masih kosong! \n\n";
+					pressAnyKey();
+				}
 				break;
 			}
 
 			case '3':
 			{
-				int inputId;
-				readTodo(todo, banyakTodo);
-
-				cout << "Masukkan Nomor: ";
-				cin >> inputId;
-
-				// Menaikkan baris
-				for (int i = inputId - 1; i < banyakTodo; i++)
+				if (banyakTodo > 0)
 				{
-					todo[i] = todo[i + 1];
-					todo[i].id -= 1;
+					int inputId;
+					bool repeat = 1;
+
+					do
+					{
+						readTodo(todo, banyakTodo);
+
+						cout << "Masukkan Nomor: ";
+						cin >> inputId;
+						cout << "\n";
+
+						if (inputId > 0 && inputId <= banyakTodo)
+						{
+							// Menaikkan baris
+							for (int i = inputId - 1; i < banyakTodo; i++)
+							{
+								todo[i] = todo[i + 1];
+								todo[i].id -= 1;
+							}
+
+							banyakTodo--;													 // Mengurangi jumlah todo
+							writeFile(todo, banyakTodo, userName); // Melakukan overwrite terhadap file
+							repeat = 0;														 // Menghentikan perulangan
+
+							cout << "Todo telah dihapus! \n\n";
+						}
+						else
+							cout << "Todo tidak ditemukan \n\n";
+
+						pressAnyKey();
+					} while (repeat);
 				}
-
-				banyakTodo--;
-				writeFile(todo, banyakTodo, userName);
-
-				cout << "\n"
-						 << "Todo telah dihapus! \n";
-				pressAnyKey();
-
+				else
+				{
+					cout << "Todo masih kosong \n\n";
+					pressAnyKey();
+				}
 				break;
 			}
 
@@ -365,11 +404,13 @@ int userLogin(User user[], int jmlUser)
 
 void userRegister(User user[], int jmlUser)
 {
-	bool repeat = 1, isExist = 0;
+	bool repeat = 1, isExist;
 	string username, passwd;
 
 	do
 	{
+		isExist = 0;
+
 		// User mendaftarkan username & password
 		cout << "[Daftar] \n"
 				 << "Masukkan username: ";
@@ -399,10 +440,10 @@ void userRegister(User user[], int jmlUser)
 			writeFileUser(user, jmlUser); // Melakukan write ke dalam files
 			repeat = 0;
 
-			cout << "User " + username + " telah berhasil didaftarkan! \n";
+			cout << "User " + username + " telah berhasil didaftarkan! \n\n";
 		}
 		else // Jika username telah terpakai
-			cout << "User " + username + " telah terpakai! \n";
+			cout << "User " + username + " telah terpakai! \n\n";
 
 		pressAnyKey();
 	} while (repeat);
@@ -580,7 +621,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].judul = judul;
 
-		cout << "\n\n";
+		cout << "\n";
 		cout << "Berhasil mengubah judul! \n\n";
 		pressAnyKey();
 		break;
@@ -592,7 +633,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].isi = isi;
 
-		cout << "\n\n";
+		cout << "\n";
 		cout << "Berhasil mengubah isi! \n\n";
 		pressAnyKey();
 		break;
@@ -604,14 +645,15 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 
 		todo[id - 1].dueDate = dueDate;
 
-		cout << "\n\n";
+		cout << "\n";
 		cout << "Berhasil mengubah tanggal! \n\n";
 		pressAnyKey();
 		break;
 
 	case '4':
 		todo[id - 1].selesai = !status;
-		cout << "Berhasil mengubah status Todo! \n";
+		cout << "\n";
+		cout << "Berhasil mengubah status Todo! \n\n";
 		pressAnyKey();
 		break;
 
