@@ -49,6 +49,7 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
+int binarySearch(InfoTodo todo[], int awal, int akgir, int num); // recursive binary search
 
 // Fungsi buat Tanggal
 string getCurrentTime();
@@ -413,22 +414,30 @@ void readTodo(InfoTodo todo[], int jml, int id)
 	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
 	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 
-	for (int i = id; i < jml; i++)
+	if (jml > 0)
 	{
-		cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(12) << " "
-				 << "|" << endl;
+		for (int i = id; i < jml; i++)
+		{
+			cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
+			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
+			cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
+			cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
+			cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
+			cout << "|" << setiosflags(ios::left) << setw(4) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
+			cout << "|" << setiosflags(ios::left) << setw(17) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(15) << " ";
+			cout << "|" << setiosflags(ios::left) << setw(12) << " "
+					 << "|" << endl;
+			cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+		}
+		cout << "\n";
+	}
+	else
+	{
+		cout << "|                                              TO-DO MASIH KOSONG                                                     |" << endl;
 		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 	}
-	cout << "\n";
 }
 
 void readFile(InfoTodo todo[], int &jml, string user)
@@ -629,6 +638,28 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 			}
 		}
 	}
+}
+
+// fungsi binary search menggunakan rekursif binary search
+int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
+{
+	if (awal <= akhir)
+	{
+		int tengah = (awal + akhir) / 2;
+		if (num == todo[tengah].id)
+		{
+			return tengah;
+		}
+		else if (num < todo[tengah].id)
+		{
+			return binarySearch(todo, awal, tengah - 1, num); // recursive
+		}
+		else
+		{
+			return binarySearch(todo, tengah + 1, akhir, num); // recursive
+		}
+	}
+	return -1;
 }
 
 void searchById(InfoTodo todo[], int jml)
