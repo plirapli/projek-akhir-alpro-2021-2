@@ -16,15 +16,13 @@ using namespace std;
 struct InfoTodo
 {
 	int id;
-	string judul, isi;
 	bool selesai = 0;
-	string startDate, dueDate;
+	string judul, isi, startDate, dueDate;
 };
 
 struct User
 {
 	string username, password;
-	// InfoTodo todo[100];
 };
 
 // User Related
@@ -642,23 +640,18 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 	}
 }
 
+// fungsi searching menggunakan binary search
 int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 {
 	if (awal <= akhir)
 	{
 		int tengah = (awal + akhir) / 2;
 		if (num == todo[tengah].id)
-		{
 			return tengah;
-		}
 		else if (num < todo[tengah].id)
-		{
 			return binarySearch(todo, awal, tengah - 1, num); // recursive
-		}
 		else
-		{
 			return binarySearch(todo, tengah + 1, akhir, num); // recursive
-		}
 	}
 	return -1;
 }
