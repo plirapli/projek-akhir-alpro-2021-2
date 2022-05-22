@@ -21,41 +21,39 @@ struct InfoTodo
 	string startDate, dueDate;
 };
 
-InfoTodo todo[100];
-
 // CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
-void readTodoSearch(InfoTodo todo[], int jml, int searchRes[]);
 void addTodo(int jml);
 void editTodo(InfoTodo todo[], int id, int jml);
 
 // R/W Files
-void readFile(InfoTodo todo[], int &jml); // Read files
-void addToFile(InfoTodo todo);						// Write single file
-void addFiles(InfoTodo todo[], int jml);	// Write multiple files
+void readFile(InfoTodo todo[], int &jml);	 // Read files
+void writeFile(InfoTodo todo);						 // Write single file
+void writeFiles(InfoTodo todo[], int jml); // Write multiple files
 
 // Sorting
-void sorting(int array[][2], int size);
+void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
+void sortByStatus(InfoTodo todo[], int jml);
+void sorting(InfoTodo todo[], int size, int sorter[]);
 
 // Searching
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
-
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
 
 // Fungsi buat Tanggal
 string getCurrentTime();
 string numMonth(string month);
-int *getDateInt(string date,  int indeks);
+int *getDateInt(string date, int indeks);
 int strToInt(string str);
 
 // Manipulasi String
+char checkMark(bool status);
 string replaceSpasi(string str);
 string replaceHyphen(string str);
 
 // Misc
 void pressAnyKey();
-string mark(bool status);
 
 int main()
 {
@@ -68,6 +66,9 @@ int main()
 
 	do
 	{
+		system(CLEAR);
+		cout << "TODO LIST APP \n";
+
 		readFile(todo, banyakTodo);
 		readTodo(todo, banyakTodo);
 
@@ -79,7 +80,6 @@ int main()
 				 << "[5] Cari To-Do \n"
 				 << "[6] Eksport To-Do \n"
 				 << "[...] Keluar \n\n";
-
 		cout << "Pilihan menu: ";
 		cin >> pilihanMenu;
 
@@ -108,87 +108,78 @@ int main()
 		}
 
 		case '3':
+		{
+			int inputId;
+			readTodo(todo, banyakTodo);
+
+			cout << "Masukkan Nomor: ";
+			cin >> inputId;
+
+			// Menaikkan baris
+			for (int i = inputId - 1; i < banyakTodo; i++)
+			{
+				todo[i] = todo[i + 1];
+				todo[i].id -= 1;
+			}
+
+			banyakTodo--;
+			writeFiles(todo, banyakTodo);
+
+			cout << "\n"
+					 << "Todo telah dihapus! \n";
+			pressAnyKey();
+
 			break;
+		}
 
 		case '4':
 		{
-			int tglBaru [100][2];
-			InfoTodo todoBaru[100];
+			string tglStr[100];
+			InfoTodo sortedTodo[100];
+
+			/* Mengcloning struct yang asli ke struct baru
+				 yang akan digunakan untuk sorting */
+			for (int i = 0; i < banyakTodo; i++)
+				sortedTodo[i] = todo[i];
+
 			cout << "Sorting berdasarkan : " << endl;
 			cout << "Cari berdasarkan: \n"
-			 << "[1] Start Date \n"
-			 << "[2] Due Date \n"
-			 << "[3] Status\n"
-			 << "[...] Kembali \n"
-			 << "Pilih > ";
-			cin >> pilihSort;
+					 << "[1] Start Date \n"
+					 << "[2] Due Date \n"
+					 << "[3] Status \n"
+					 << "[...] Kembali \n"
+					 << "Pilih > ";
+			cin >> pilihanMenu;
 			system(CLEAR);
-			switch (pilihSort) {
-				case 1 :
-				for (int j = 0; j < banyakTodo; j++) {
+
+			switch (pilihanMenu)
+			{
+			case '1':
+				for (int i = 0; i < banyakTodo; i++)
 					// Tanggal yang masih berbentuk string
-					string tglStr = todo[j].startDate;
-		
-					// Tanggal yang sudah berbentuk array of integer
-					int *tglInt = getDateInt(tglStr, j);
-					tglBaru[j][0] = (tglInt[0] + 100*tglInt[1] + 10000*tglInt[2]);
-					tglBaru[j][1] = tglInt[3];
-				}
-					sorting(tglBaru, banyakTodo);
-					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-					cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
-					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-					for (int i = 0; i < banyakTodo; i++) {
-					cout << "|" << setiosflags(ios::left) << setw(4) << todo[tglBaru[i][1]].id;
-					cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].judul;
-					cout << "|" << setiosflags(ios::left) << setw(17) << todo[tglBaru[i][1]].startDate;
-					cout << "|" << setiosflags(ios::left) << setw(15) << todo[tglBaru[i][1]].dueDate;
-					cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[tglBaru[i][1]].selesai) << "|" << endl;
-					cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-					cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].isi;
-					cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-					cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-					cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
-					cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-				}
-				cout << endl;
-					break;
-				case 2 : 
-				for (int j = 0; j < banyakTodo; j++) {
-					
+					tglStr[i] = todo[i].startDate;
+
+				sortByDate(sortedTodo, banyakTodo, tglStr);
+				break;
+
+			case '2':
+				for (int i = 0; i < banyakTodo; i++)
 					// Tanggal yang masih berbentuk string
-					string tglStr = todo[j].dueDate;
-		
-					// Tanggal yang sudah berbentuk array of integer
-					int *tglInt = getDateInt(tglStr, j);
-					tglBaru[j][0] = (tglInt[0] + 100*tglInt[1] + 10000*tglInt[2]);
-					tglBaru[j][1] = tglInt[3];
-				}
-				sorting(tglBaru, banyakTodo);
-				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-				cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
-				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-				for (int i = 0; i < banyakTodo; i++) {
-				cout << "|" << setiosflags(ios::left) << setw(4) << todo[tglBaru[i][1]].id;
-				cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].judul;
-				cout << "|" << setiosflags(ios::left) << setw(17) << todo[tglBaru[i][1]].startDate;
-				cout << "|" << setiosflags(ios::left) << setw(15) << todo[tglBaru[i][1]].dueDate;
-				cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[tglBaru[i][1]].selesai) << "|" << endl;
-				cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-				cout << "|" << setiosflags(ios::left) << setw(65) << todo[tglBaru[i][1]].isi;
-				cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-				cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-				cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
-				cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-				}
-				cout << endl;
-				system ("pause");
-				break; 
-			case 3 : 
+					tglStr[i] = todo[i].dueDate;
+
+				sortByDate(sortedTodo, banyakTodo, tglStr);
+				break;
+
+			case '3':
+				sortByStatus(sortedTodo, banyakTodo);
+				break;
+
+			default:
 				break;
 			}
 		}
 		break;
+
 		case '5':
 		{
 			cout << "Cari berdasarkan: \n"
@@ -226,8 +217,7 @@ int main()
 			cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
 			cout << "Please wait..." << endl
 					 << endl;
-			system("pause");
-			system("cls");
+			pressAnyKey();
 			ofstream ofs("export.txt");
 
 			if (ofs.is_open())
@@ -242,12 +232,13 @@ int main()
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
 					ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-					ofs << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
+					ofs << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
 					ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
 					ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 					ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
 					ofs << "|" << setiosflags(ios::left) << setw(15) << " ";
-					ofs << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+					ofs << "|" << setiosflags(ios::left) << setw(12) << " "
+							<< "|" << endl;
 					ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 				}
 
@@ -256,7 +247,7 @@ int main()
 				cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
 				cout << "Terima kasih telah menggunakan program kami";
 			}
-			system ("pause");
+			pressAnyKey();
 			break;
 		}
 
@@ -264,7 +255,6 @@ int main()
 			isExit = 1;
 			break;
 		}
-		system(CLEAR);
 	} while (isExit != 1);
 
 	cout << "Terima kasih telah menggunakan program kami.";
@@ -283,35 +273,13 @@ void readTodo(InfoTodo todo[], int jml, int id)
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
 		cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
 		cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[i].selesai) << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
 		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
 		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
 		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
-		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-	}
-	cout << "\n";
-}
-
-void readTodoSearch(InfoTodo todo[], int jml, int searchRes[])
-{
-	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-	cout << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
-	cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-
-	for (int i = 1; i < jml; i++)
-	{
-		cout << "|" << setiosflags(ios::left) << setw(4) << todo[searchRes[i]].id;
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].judul;
-		cout << "|" << setiosflags(ios::left) << setw(17) << todo[searchRes[i]].startDate;
-		cout << "|" << setiosflags(ios::left) << setw(15) << todo[searchRes[i]].dueDate;
-		cout << "|" << setiosflags(ios::left) << setw(12) << mark(todo[searchRes[i]].selesai) << "|" << endl;
-		cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(65) << todo[searchRes[i]].isi;
-		cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-		cout << "|" << setiosflags(ios::left) << setw(12) << " " << "|" << endl;
+		cout << "|" << setiosflags(ios::left) << setw(12) << " "
+				 << "|" << endl;
 		cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 	}
 	cout << "\n";
@@ -359,14 +327,14 @@ void addTodo(int jml)
 	cout << "Due Date [DD/MM/YYY]: ";
 	cin >> todo.dueDate;
 
-	addToFile(todo);
+	writeFile(todo);
 
 	cout << "\n"
 			 << "Berhasil menambahkan todo! \n";
 	pressAnyKey();
 }
 
-void addToFile(InfoTodo todo)
+void writeFile(InfoTodo todo)
 {
 	string fileName = "rafli.txt"; // Temporary
 
@@ -390,7 +358,7 @@ void addToFile(InfoTodo todo)
 		cout << "Todo masih kosong. \n";
 }
 
-void addFiles(InfoTodo todo[], int jml)
+void writeFiles(InfoTodo todo[], int jml)
 {
 	int i;
 	string fileName = "rafli.txt"; // Temporary
@@ -483,30 +451,64 @@ void editTodo(InfoTodo todo[], int id, int jml)
 		break;
 	}
 
-	addFiles(todo, jml);
+	writeFiles(todo, jml);
 }
 
-void sorting(int array[][2], int size)
+void sortByDate(InfoTodo todo[], int jml, string tglStr[])
 {
-	int temp, i, j, tempIndeks;
-	
+	int tglBaru[100];
+
+	for (int i = 0; i < jml; i++)
+	{
+		// Tanggal yang sudah berbentuk array of integer
+		int *tglInt = getDateInt(tglStr[i], i);
+
+		tglBaru[i] = (tglInt[0] + 100 * tglInt[1] + 10000 * tglInt[2]);
+	}
+
+	sorting(todo, jml, tglBaru);
+	readTodo(todo, jml);
+	pressAnyKey();
+}
+
+void sortByStatus(InfoTodo todo[], int jml)
+{
+	/* Variabel untuk menyimpan kumpulan status yang telah
+		 dikonversi ke bentuk integer
+	 */
+	int status[100];
+
+	for (int i = 0; i < jml; i++)
+		status[i] = (todo[i].selesai) ? 1 : 0;
+
+	sorting(todo, jml, status);
+	readTodo(todo, jml);
+	pressAnyKey();
+}
+
+void sorting(InfoTodo todo[], int size, int sorter[])
+{
+	InfoTodo tempStruct;
+	int i, j, temp;
+
 	for (i = 0; i < size - 1; i++)
 	{
 		for (j = 0; j < size - i - 1; j++)
 		{
-			if (array[j][0] > array[j + 1][0])
+			if (sorter[j] > sorter[j + 1])
 			{
-				temp = array[j][0];
-				array[j][0] = array[j + 1][0];
-				array[j + 1][0] = temp;
-				
-				tempIndeks = array[j][1];
-				array[j][1] = array[j + 1][1];
-				array[j + 1][1] = tempIndeks;
+				// Sorting penyortirnya
+				temp = sorter[j];
+				sorter[j] = sorter[j + 1];
+				sorter[j + 1] = temp;
+
+				// Sorting todo
+				tempStruct = todo[j];
+				todo[j] = todo[j + 1];
+				todo[j + 1] = tempStruct;
 			}
 		}
 	}
-	
 }
 
 void searchById(InfoTodo todo[], int jml)
@@ -554,15 +556,14 @@ void searchById(InfoTodo todo[], int jml)
 		} while (!(cariUlang == 'y' || cariUlang == 'Y' || cariUlang == 'N' || cariUlang == 'n'));
 
 		if (cariUlang == 'y' || cariUlang == 'Y')
-		{
-			system("pause");
-			system(CLEAR);
-		}
+			pressAnyKey();
+
 	} while (cariUlang == 'y' || cariUlang == 'Y');
 }
 
 void searchByDate(InfoTodo todo[], int jml, bool startDate)
 {
+	InfoTodo foundTodo[100];
 	string dateInput;
 	int *result;
 
@@ -571,11 +572,15 @@ void searchByDate(InfoTodo todo[], int jml, bool startDate)
 
 	result = multipleSearch(todo, jml, dateInput, startDate);
 
+	for (int i = 0; i < result[0]; i++)
+		foundTodo[i] = todo[result[i + 1]];
+
 	if (result[0] != 0)
-		readTodoSearch(todo, result[0], result);
+		readTodo(foundTodo, result[0]);
 	else
 		cout << "Todo tidak ditemukan. \n";
 
+	cout << "\n";
 	pressAnyKey();
 }
 
@@ -610,7 +615,7 @@ int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 		}
 	}
 
-	res[0] = (isFound) ? resIndex : 0;
+	res[0] = (isFound) ? resIndex - 1 : 0;
 
 	return res;
 }
@@ -706,18 +711,14 @@ string replaceHyphen(string str)
 	return str;
 }
 
+char checkMark(bool status)
+{
+	return status ? 'v' : 'x';
+}
+
 void pressAnyKey()
 {
 	cout << "[Press any key to continue.]";
 	getch();
 	system(CLEAR);
-}
-
-string mark (bool status) {
-	int i;
-	if (status == true) {
-		return "vvv";
-	} else {
-		return "incomplete";
-	}
 }

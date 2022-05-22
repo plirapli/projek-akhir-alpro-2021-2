@@ -1,0 +1,6 @@
+What's next:
+- Sorting desc feature
+- Login feature
+- Sign Up feature
+- Priority levels feature
+- Tags/label feature
