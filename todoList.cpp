@@ -640,7 +640,6 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 	}
 }
 
-// fungsi binary search menggunakan rekursif binary search
 int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 {
 	if (awal <= akhir)
