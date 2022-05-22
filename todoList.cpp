@@ -105,7 +105,6 @@ int main()
 
 			case '2':
 				userRegister(user, jmlUser);
-				cout << user[jmlUser - 1].username << ": " << user[jmlUser - 1].password << "\n";
 				repeatMenu = 1;
 				repeatMainMenu = 1;
 				break;
