@@ -1,4 +1,0 @@
-What's next:
-- Sorting desc feature
-- Priority levels feature
-- Tags/label feature

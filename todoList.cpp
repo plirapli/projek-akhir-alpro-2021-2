@@ -313,13 +313,15 @@ int main()
 
 			case '6':
 			{
-				system(CLEAR);
-				cout << "Program anda akan diexport dalam bentuk file .txt dengan nama 'export.txt'" << endl;
-				cout << "Please wait..." << endl
-						 << endl;
-				pressAnyKey();
-				ofstream ofs("export.txt");
+				string fileName = "./export/" + userName + "-export.txt";
 
+				system(CLEAR);
+				cout << "Program anda akan diexport dalam bentuk file .txt dengan nama "
+						 << fileName << "\n"
+						 << "Please wait...\n\n";
+				pressAnyKey();
+
+				ofstream ofs(fileName);
 				if (ofs.is_open())
 				{
 					ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
@@ -344,9 +346,12 @@ int main()
 
 					ofs.close();
 
-					cout << "Silahkan cek file lokasi source code ini. Anda akan menemukan hasil export tersebut dengan nama file 'export.txt'" << endl;
-					cout << "Terima kasih telah menggunakan program kami";
+					cout << "Silahkan cek lokasi '/export/'. "
+							 << "Anda akan menemukan hasil export tersebut dengan nama file "
+							 << fileName << "\n"
+							 << "Terima kasih telah menggunakan program kami \n\n";
 				}
+
 				pressAnyKey();
 				break;
 			}
@@ -464,7 +469,7 @@ void userRegister(User user[], int jmlUser)
 
 void readFileUser(User user[], int &jmlUser)
 {
-	string fileName = "user.txt"; // Temporary
+	string fileName = "./user/user.txt"; // Temporary
 
 	ifstream myFile(fileName);
 	jmlUser = 0;
@@ -487,7 +492,7 @@ void readFileUser(User user[], int &jmlUser)
 
 void writeFileUser(User user[], int jmlUser)
 {
-	string fileName = "user.txt"; // Temporary
+	string fileName = "./user/user.txt"; // Temporary
 
 	ofstream myFile(fileName);
 	if (myFile.is_open())
