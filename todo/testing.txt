@@ -1,6 +1,4 @@
-1 ini-judul ini-adalah-isi-todo 20/05/2022 04/05/2021 0
-2 lorem-ipsum lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit 20/05/2022 15/10/2022 0
-3 mengerjakan-pr mengerjakan-projek-akhir-praktikum-alpro 20/05/2022 29/05/2022 0
-4 ngarit ngarit-di-sawah 20/05/2022 29/05/2022 1
-5 main jangan-lupa-mabar-ygy 21/05/2022 29/05/2022 0
-6 Mengerjakan-PR Mengerjakan-tugas-kalkulus 21/05/2022 12/06/2022 0
+1 Mengerjakan-PR Mengerjakan-tugas-kalkulus 20/05/2022 12/06/2022 0
+2 Mencuci-mobil Bismillah-mencuci-mobil 20/05/2022 04/05/2021 0
+4 Ngarit Ngarit-di-sawah 21/05/2022 29/05/2022 1
+5 Bermain Jangan-lupa-mabar-ygy 21/05/2022 29/05/2022 0
