@@ -34,11 +34,13 @@ void writeFileUser(User user[], int jmlUser); // Write files (user)
 // Todo CRUD
 void readTodo(InfoTodo todo[], int jml, int id = 0);
 void addTodo(InfoTodo todo[], int jml, string user);
-void editTodo(InfoTodo todo[], int id, int jml, string user);
+void editTodo(InfoTodo todo[], int indexTodo, int jml, string user);
+void exportTodo(InfoTodo todo[], int jml, string user);
 
 // R/W Files Todo
-void readFile(InfoTodo todo[], int &jml, string user); // Read files
-void writeFile(InfoTodo todo[], int jml, string user); // Write files
+void readFile(InfoTodo todo[], int &jml, string user);					 // Read files
+void writeFile(InfoTodo todo[], int jml, string user);					 // Write files
+void writeFileExport(InfoTodo todo[], int jml, string fileName); // Write files (Export)
 
 // Sorting
 void sortByDate(InfoTodo todo[], int jml, string tglStr[]);
@@ -49,7 +51,7 @@ void sorting(InfoTodo todo[], int size, int sorter[]);
 void searchById(InfoTodo todo[], int jml);
 void searchByDate(InfoTodo todo[], int jml, bool startDate = 1);
 int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate = 1);
-int binarySearch(InfoTodo todo[], int awal, int akgir, int num);
+int binarySearch(InfoTodo todo[], int awal, int akhir, int num);
 
 // Fungsi buat Tanggal
 string getCurrentTime();									// Mengambil waktu saat ini
@@ -119,11 +121,14 @@ int main()
 		// Main Menu
 		while (repeatMainMenu)
 		{
-			userName = user[idUser].username;
+			userName = user[idUser].username; // Digunakan untuk menyimpan username pengguna
 
 			system(CLEAR);
 			cout << "TODO LIST APP \n";
 
+			/* Fungsi readFile() membaca todo melalui file, kemudian disimpan di dalam struct.
+				 Setelah itu, struct dibaca pada fungsi readTodo().
+			 */
 			readFile(todo, banyakTodo, userName);
 			readTodo(todo, banyakTodo);
 
@@ -141,12 +146,14 @@ int main()
 
 			switch (pilihanMenu)
 			{
-			case '1':
+			case '1': // Add
+			{
 				system(CLEAR);
 				addTodo(todo, banyakTodo, userName);
 				break;
+			}
 
-			case '2':
+			case '2': // Edit
 			{
 				system(CLEAR);
 				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
@@ -164,8 +171,10 @@ int main()
 						if (id > 0 && id <= banyakTodo)
 						{
 							system(CLEAR);
+
+							// id - 1 karena index merupakan id dikurangi 1
 							readTodo(todo, id, id - 1); // Menampilkan todo yang dicari
-							editTodo(todo, id, banyakTodo, userName);
+							editTodo(todo, id - 1, banyakTodo, userName);
 							repeat = 0; // Menghentikan perulangan
 						}
 						else
@@ -183,7 +192,7 @@ int main()
 				break;
 			}
 
-			case '3':
+			case '3': // Delete
 			{
 				system(CLEAR);
 				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
@@ -228,7 +237,7 @@ int main()
 				break;
 			}
 
-			case '4':
+			case '4': // Sorting
 			{
 				system(CLEAR);
 
@@ -278,7 +287,7 @@ int main()
 			}
 			break;
 
-			case '5':
+			case '5': // Searching
 			{
 				system(CLEAR);
 				cout << "Cari berdasarkan: \n"
@@ -311,57 +320,21 @@ int main()
 				break;
 			}
 
-			case '6':
+			case '6': // Export
 			{
-				string fileName = "./export/" + userName + "-export.txt";
-
 				system(CLEAR);
-				cout << "Program anda akan diexport dalam bentuk file .txt dengan nama "
-						 << fileName << "\n"
-						 << "Please wait...\n\n";
-				pressAnyKey();
-
-				ofstream ofs(fileName);
-				if (ofs.is_open())
-				{
-					ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-					ofs << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
-					ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-
-					for (int i = 0; i < banyakTodo; i++)
-					{
-						ofs << "|" << setiosflags(ios::left) << setw(4) << i + 1;
-						ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-						ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-						ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-						ofs << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-						ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
-						ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-						ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
-						ofs << "|" << setiosflags(ios::left) << setw(15) << " ";
-						ofs << "|" << setiosflags(ios::left) << setw(12) << " "
-								<< "|" << endl;
-						ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
-					}
-
-					ofs.close();
-
-					cout << "Silahkan cek lokasi '/export/'. "
-							 << "Anda akan menemukan hasil export tersebut dengan nama file "
-							 << fileName << "\n"
-							 << "Terima kasih telah menggunakan program kami \n\n";
-				}
-
-				pressAnyKey();
+				exportTodo(todo, banyakTodo, userName);
 				break;
 			}
 
-			case '7':
+			case '7': // Logout
+			{
 				cout << "\n"
 						 << "Logout berhasil. \n\n";
 				pressAnyKey();
 				repeatMainMenu = 0;
 				break;
+			}
 
 			default:
 				repeatMainMenu = 0;
@@ -393,6 +366,7 @@ int userLogin(User user[], int jmlUser)
 		cin >> passwd;
 		cout << "\n";
 
+		// Melakukan pengecekan username & password
 		for (int i = 0; i < jmlUser; i++)
 		{
 			if (username == user[i].username && passwd == user[i].password)
@@ -415,7 +389,7 @@ int userLogin(User user[], int jmlUser)
 			cout << "Login berhasil! \n\n";
 
 		pressAnyKey();
-	} while (repeat && loginAttempt < 3);
+	} while (repeat && loginAttempt < 3); // User hanya bisa salah memasukkan maks. 3x
 
 	return indexUser;
 }
@@ -437,6 +411,7 @@ void userRegister(User user[], int jmlUser)
 		cin >> passwd;
 		cout << "\n";
 
+		// Melakukan pengecekan apakah username telah terpakai
 		for (int i = 0; i < jmlUser; i++)
 		{
 			if (username == user[i].username)
@@ -516,16 +491,16 @@ void readTodo(InfoTodo todo[], int jml, int id)
 	{
 		for (int i = id; i < jml; i++)
 		{
-			cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
-			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-			cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-			cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-			cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-			cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-			cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(12) << " "
+			cout << "| " << setiosflags(ios::left) << setw(3) << todo[i].id;
+			cout << "| " << setiosflags(ios::left) << setw(64) << todo[i].judul;
+			cout << "| " << setiosflags(ios::left) << setw(16) << todo[i].startDate;
+			cout << "| " << setiosflags(ios::left) << setw(14) << todo[i].dueDate;
+			cout << "| " << setiosflags(ios::left) << setw(11) << checkMark(todo[i].selesai) << "|" << endl;
+			cout << "| " << setiosflags(ios::left) << setw(3) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(64) << todo[i].isi;
+			cout << "| " << setiosflags(ios::left) << setw(16) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(14) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(11) << " "
 					 << "|" << endl;
 			cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 		}
@@ -579,9 +554,9 @@ void addTodo(InfoTodo todo[], int jml, string user)
 	cin >> todo[jml].dueDate;
 	cout << "\n";
 
-	jml++;
+	jml++; // Variabel asli dari jumlah todo juga ikut bertambah
 
-	writeFile(todo, jml, user);
+	writeFile(todo, jml, user); // File di-overwrite oleh struct yang telah ditambahkan
 	pressAnyKey();
 }
 
@@ -615,10 +590,48 @@ void writeFile(InfoTodo todo[], int jml, string user)
 		cout << "Gagal membuka file. \n";
 }
 
-void editTodo(InfoTodo todo[], int id, int jml, string user)
+void writeFileExport(InfoTodo todo[], int jml, string fileName)
+{
+	ofstream ofs(fileName);
+	if (ofs.is_open())
+	{
+		ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+		ofs << "| ID |                             TO - DO                             |    Start Date   |    Due Date   |   status   |" << endl;
+		ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+
+		for (int i = 0; i < jml; i++)
+		{
+			ofs << "| " << setiosflags(ios::left) << setw(3) << i + 1;
+			ofs << "| " << setiosflags(ios::left) << setw(64) << todo[i].judul;
+			ofs << "| " << setiosflags(ios::left) << setw(16) << todo[i].startDate;
+			ofs << "| " << setiosflags(ios::left) << setw(14) << todo[i].dueDate;
+			ofs << "| " << setiosflags(ios::left) << setw(11) << checkMark(todo[i].selesai) << "|" << endl;
+			ofs << "| " << setiosflags(ios::left) << setw(3) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(64) << todo[i].isi;
+			ofs << "| " << setiosflags(ios::left) << setw(16) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(14) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(11) << " "
+					<< "|" << endl;
+			ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
+		}
+
+		ofs.close();
+
+		cout << "Silahkan cek lokasi '/export/'. "
+				 << "Anda akan menemukan hasil export tersebut dengan nama file "
+				 << fileName << "\n"
+				 << "Terima kasih telah menggunakan program kami \n\n";
+	}
+	else
+		cout << "File tidak dapat dibuka. \n\n";
+
+	pressAnyKey();
+}
+
+void editTodo(InfoTodo todo[], int indexTodo, int jml, string user)
 {
 	char menu;
-	bool status = todo[id - 1].selesai;
+	bool status = todo[indexTodo].selesai;
 	string judul, isi, dueDate;
 
 	cout << "Pilih yang ingin diubah: \n"
@@ -637,7 +650,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		cin.ignore();
 		getline(cin, judul);
 
-		todo[id - 1].judul = judul;
+		todo[indexTodo].judul = judul;
 
 		cout << "\n"
 				 << "Berhasil mengubah judul! \n\n";
@@ -649,7 +662,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		cin.ignore();
 		getline(cin, isi);
 
-		todo[id - 1].isi = isi;
+		todo[indexTodo].isi = isi;
 
 		cout << "\n"
 				 << "Berhasil mengubah isi! \n\n";
@@ -661,7 +674,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		cin.ignore();
 		getline(cin, dueDate);
 
-		todo[id - 1].dueDate = dueDate;
+		todo[indexTodo].dueDate = dueDate;
 
 		cout << "\n"
 				 << "Berhasil mengubah tanggal! \n\n";
@@ -669,7 +682,7 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 		break;
 
 	case '4':
-		todo[id - 1].selesai = !status;
+		todo[indexTodo].selesai = !status;
 		cout << "\n"
 				 << "Berhasil mengubah status Todo! \n\n";
 		pressAnyKey();
@@ -680,6 +693,19 @@ void editTodo(InfoTodo todo[], int id, int jml, string user)
 	}
 
 	writeFile(todo, jml, user);
+}
+
+void exportTodo(InfoTodo todo[], int jml, string user)
+{
+	string fileName = "./export/" + user + "-export.txt";
+
+	cout << "Program anda akan diexport dalam bentuk file .txt dengan nama "
+			 << fileName << "\n"
+			 << "Please wait...\n\n";
+	pressAnyKey();
+
+	// Melakukan write file
+	writeFileExport(todo, jml, fileName);
 }
 
 // Fungsi sorting berdasarkan tanggal
@@ -728,12 +754,12 @@ void sorting(InfoTodo todo[], int size, int sorter[])
 		{
 			if (sorter[j] > sorter[j + 1])
 			{
-				// Sorting penyortirnya
+				// Menukar penyortirnya
 				temp = sorter[j];
 				sorter[j] = sorter[j + 1];
 				sorter[j + 1] = temp;
 
-				// Sorting todo
+				// Menukar todo
 				tempStruct = todo[j];
 				todo[j] = todo[j + 1];
 				todo[j + 1] = tempStruct;
@@ -748,6 +774,13 @@ int binarySearch(InfoTodo todo[], int awal, int akhir, int num)
 	if (awal <= akhir)
 	{
 		int tengah = (awal + akhir) / 2;
+
+		/* - Jika input = nilai tengah, maka fungsi mengembalikan nilai tengah.
+			 - Jika input berada di sisi kiri nilai tengah,
+				 maka panggil fungsi lagi (rekursif) dengan nilai tengah-1 sebagai parameter akhir
+			 - Jika input berada di sisi kanan nilai tengah,
+				 maka panggil fungsi lagi (rekursif) dengan nilai tengah+1 sebagai parameter awal
+		*/
 		if (num == todo[tengah].id)
 			return tengah;
 		else if (num < todo[tengah].id)
@@ -812,9 +845,10 @@ void searchByDate(InfoTodo todo[], int jml, bool startDate)
 	result = multipleSearch(todo, jml, dateInput, startDate);
 
 	for (int i = 0; i < result[0]; i++)
+		// Hasil todo yang telah ditemukan disimpan di struct array foundTodo
 		foundTodo[i] = todo[result[i + 1]];
 
-	if (result[0] != 0)
+	if (result[0] != 0) // Melakukan pengecekan ada/tidaknya todo
 		readTodo(foundTodo, result[0]);
 	else
 		cout << "Todo tidak ditemukan. \n";
@@ -830,7 +864,7 @@ int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 	int resIndex = 1;
 	bool isFound = 0;
 
-	if (startDate)
+	if (startDate) // Jika mencari berdasarkan tanggal dibuat
 	{
 		for (int i = 0; i < jml; i++)
 		{
@@ -842,7 +876,7 @@ int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 			}
 		}
 	}
-	else
+	else // Jika mencari berdasarkan due date
 	{
 		for (int i = 0; i < jml; i++)
 		{
@@ -855,6 +889,7 @@ int *multipleSearch(InfoTodo todo[], int jml, string input, bool startDate)
 		}
 	}
 
+	// Array indeks ke-0 digunakan untuk menyimpan ukuran array
 	res[0] = (isFound) ? resIndex - 1 : 0;
 
 	return res;
@@ -896,7 +931,7 @@ string numMonth(string month)
 
 int *getDateInt(string date, int indeks)
 {
-	int *tgl = new int[4];
+	int *tgl = new int[3];
 
 	if (!(date.length() < 9))
 	{
@@ -905,10 +940,10 @@ int *getDateInt(string date, int indeks)
 		char month[] = {date[3], date[4], '\0'};
 		char year[] = {date[6], date[7], date[8], date[9], '\0'};
 
+		// Menyimpan hari di array indeks ke-0, bulan indeks ke-1, dan tahun di indeks ke-2
 		tgl[0] = strToInt(day);
 		tgl[1] = strToInt(month);
 		tgl[2] = strToInt(year);
-		tgl[3] = indeks;
 	}
 	else
 	{

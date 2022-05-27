@@ -1,4 +1,7 @@
-1 Mengerjakan-PR Mengerjakan-tugas-kalkulus 20/05/2022 12/06/2022 0
-2 Mencuci-mobil Bismillah-mencuci-mobil 20/05/2022 04/05/2021 0
-4 Ngarit Ngarit-di-sawah 21/05/2022 29/05/2022 1
-5 Bermain Jangan-lupa-mabar-ygy 21/05/2022 29/05/2022 0
+1 Praktikum-alpro Mengerjakan-projek-akhir 27/05/2022 27/05/2022 1
+2 Prak-Jarkom Mengerjakan-projek-akhir 27/05/2022 28/05/2022 1
+3 MRV Mengerjkan-soal-soal-yang-diberikan-bu-willis 27/05/2022 02/06/2022 0
+4 Kalkulus Tugas-Kelompok 27/05/2022 30/05/2022 1
+5 Statistika Mengerjakan-soal-latihan-UAS 27/05/2022 27/05/2022 1
+6 Algoritma-&-Pemrograman-Lanjut Mengerjakan-projek-akhir-yang-diberikan-bu-willis 27/05/2022 20/06/2022 0
+7 Olahraga Melaksanakan-ujian-keterampilan 27/05/2022 30/05/2022 0
