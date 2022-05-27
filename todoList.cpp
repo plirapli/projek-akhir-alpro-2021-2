@@ -491,16 +491,16 @@ void readTodo(InfoTodo todo[], int jml, int id)
 	{
 		for (int i = id; i < jml; i++)
 		{
-			cout << "|" << setiosflags(ios::left) << setw(4) << todo[i].id;
-			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-			cout << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-			cout << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-			cout << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-			cout << "|" << setiosflags(ios::left) << setw(4) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-			cout << "|" << setiosflags(ios::left) << setw(17) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(15) << " ";
-			cout << "|" << setiosflags(ios::left) << setw(12) << " "
+			cout << "| " << setiosflags(ios::left) << setw(3) << todo[i].id;
+			cout << "| " << setiosflags(ios::left) << setw(64) << todo[i].judul;
+			cout << "| " << setiosflags(ios::left) << setw(16) << todo[i].startDate;
+			cout << "| " << setiosflags(ios::left) << setw(14) << todo[i].dueDate;
+			cout << "| " << setiosflags(ios::left) << setw(11) << checkMark(todo[i].selesai) << "|" << endl;
+			cout << "| " << setiosflags(ios::left) << setw(3) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(64) << todo[i].isi;
+			cout << "| " << setiosflags(ios::left) << setw(16) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(14) << " ";
+			cout << "| " << setiosflags(ios::left) << setw(11) << " "
 					 << "|" << endl;
 			cout << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 		}
@@ -601,16 +601,16 @@ void writeFileExport(InfoTodo todo[], int jml, string fileName)
 
 		for (int i = 0; i < jml; i++)
 		{
-			ofs << "|" << setiosflags(ios::left) << setw(4) << i + 1;
-			ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].judul;
-			ofs << "|" << setiosflags(ios::left) << setw(17) << todo[i].startDate;
-			ofs << "|" << setiosflags(ios::left) << setw(15) << todo[i].dueDate;
-			ofs << "|" << setiosflags(ios::left) << setw(12) << checkMark(todo[i].selesai) << "|" << endl;
-			ofs << "|" << setiosflags(ios::left) << setw(4) << " ";
-			ofs << "|" << setiosflags(ios::left) << setw(65) << todo[i].isi;
-			ofs << "|" << setiosflags(ios::left) << setw(17) << " ";
-			ofs << "|" << setiosflags(ios::left) << setw(15) << " ";
-			ofs << "|" << setiosflags(ios::left) << setw(12) << " "
+			ofs << "| " << setiosflags(ios::left) << setw(3) << i + 1;
+			ofs << "| " << setiosflags(ios::left) << setw(64) << todo[i].judul;
+			ofs << "| " << setiosflags(ios::left) << setw(16) << todo[i].startDate;
+			ofs << "| " << setiosflags(ios::left) << setw(14) << todo[i].dueDate;
+			ofs << "| " << setiosflags(ios::left) << setw(11) << checkMark(todo[i].selesai) << "|" << endl;
+			ofs << "| " << setiosflags(ios::left) << setw(3) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(64) << todo[i].isi;
+			ofs << "| " << setiosflags(ios::left) << setw(16) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(14) << " ";
+			ofs << "| " << setiosflags(ios::left) << setw(11) << " "
 					<< "|" << endl;
 			ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 		}
