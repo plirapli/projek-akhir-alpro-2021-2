@@ -155,12 +155,12 @@ int main()
 
 			case '2': // Edit
 			{
-				system(CLEAR);
 				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
 				{
 					int id;
 					bool repeat = 1;
 
+					system(CLEAR);
 					do
 					{
 						readTodo(todo, banyakTodo); // Menampilkan semua todo
@@ -194,12 +194,12 @@ int main()
 
 			case '3': // Delete
 			{
-				system(CLEAR);
 				if (banyakTodo > 0) // Melakukan pengecekan adanya todo
 				{
 					int inputId;
 					bool repeat = 1;
 
+					system(CLEAR);
 					do
 					{
 						readTodo(todo, banyakTodo);
@@ -239,91 +239,112 @@ int main()
 
 			case '4': // Sorting
 			{
-				system(CLEAR);
-
-				string tglStr[100];
-				InfoTodo sortedTodo[100];
-
-				/* Mengcloning struct yang asli ke struct baru
-					 yang akan digunakan untuk sorting */
-				for (int i = 0; i < banyakTodo; i++)
-					sortedTodo[i] = todo[i];
-
-				cout << "Sorting berdasarkan : " << endl;
-				cout << "Cari berdasarkan: \n"
-						 << "[1] Start Date \n"
-						 << "[2] Due Date \n"
-						 << "[3] Status \n"
-						 << "[...] Kembali \n"
-						 << "Pilih > ";
-				cin >> pilihanMenu;
-				system(CLEAR);
-
-				switch (pilihanMenu)
+				if (banyakTodo > 0)
 				{
-				case '1':
+					string tglStr[100];
+					InfoTodo sortedTodo[100];
+
+					system(CLEAR);
+					/* Mengcloning struct yang asli ke struct baru
+						 yang akan digunakan untuk sorting */
 					for (int i = 0; i < banyakTodo; i++)
-						// Tanggal yang masih berbentuk string
-						tglStr[i] = todo[i].startDate;
+						sortedTodo[i] = todo[i];
 
-					sortByDate(sortedTodo, banyakTodo, tglStr);
-					break;
+					cout << "Sorting berdasarkan : " << endl;
+					cout << "Cari berdasarkan: \n"
+							 << "[1] Start Date \n"
+							 << "[2] Due Date \n"
+							 << "[3] Status \n"
+							 << "[...] Kembali \n"
+							 << "Pilih > ";
+					cin >> pilihanMenu;
+					system(CLEAR);
 
-				case '2':
-					for (int i = 0; i < banyakTodo; i++)
-						// Tanggal yang masih berbentuk string
-						tglStr[i] = todo[i].dueDate;
+					switch (pilihanMenu)
+					{
+					case '1':
+						for (int i = 0; i < banyakTodo; i++)
+							// Tanggal yang masih berbentuk string
+							tglStr[i] = todo[i].startDate;
 
-					sortByDate(sortedTodo, banyakTodo, tglStr);
-					break;
+						sortByDate(sortedTodo, banyakTodo, tglStr);
+						break;
 
-				case '3':
-					sortByStatus(sortedTodo, banyakTodo);
-					break;
+					case '2':
+						for (int i = 0; i < banyakTodo; i++)
+							// Tanggal yang masih berbentuk string
+							tglStr[i] = todo[i].dueDate;
 
-				default:
-					break;
+						sortByDate(sortedTodo, banyakTodo, tglStr);
+						break;
+
+					case '3':
+						sortByStatus(sortedTodo, banyakTodo);
+						break;
+
+					default:
+						break;
+					}
+				}
+				else
+				{
+					cout << "Todo masih kosong! \n\n";
+					pressAnyKey();
 				}
 			}
 			break;
 
 			case '5': // Searching
 			{
-				system(CLEAR);
-				cout << "Cari berdasarkan: \n"
-						 << "[1] ID \n"
-						 << "[2] Start Date \n"
-						 << "[3] Due Date \n"
-						 << "[...] Kembali \n"
-						 << "Pilih > ";
-				cin >> pilihanMenu;
-				system(CLEAR);
-
-				switch (pilihanMenu)
+				if (banyakTodo > 0)
 				{
-				case '1':
-					searchById(todo, banyakTodo);
-					break;
+					system(CLEAR);
+					cout << "Cari berdasarkan: \n"
+							 << "[1] ID \n"
+							 << "[2] Start Date \n"
+							 << "[3] Due Date \n"
+							 << "[...] Kembali \n"
+							 << "Pilih > ";
+					cin >> pilihanMenu;
+					system(CLEAR);
 
-				case '2':
-					searchByDate(todo, banyakTodo);
-					break;
+					switch (pilihanMenu)
+					{
+					case '1':
+						searchById(todo, banyakTodo);
+						break;
 
-				case '3':
-					searchByDate(todo, banyakTodo, 0);
-					break;
+					case '2':
+						searchByDate(todo, banyakTodo);
+						break;
 
-				default:
-					break;
+					case '3':
+						searchByDate(todo, banyakTodo, 0);
+						break;
+
+					default:
+						break;
+					}
 				}
-
+				else
+				{
+					cout << "Todo masih kosong! \n\n";
+					pressAnyKey();
+				}
 				break;
 			}
 
 			case '6': // Export
 			{
-				system(CLEAR);
-				exportTodo(todo, banyakTodo, userName);
+				if (banyakTodo > 0)
+				{
+					system(CLEAR);
+					exportTodo(todo, banyakTodo, userName);
+				}
+				else
+					cout << "Todo masih kosong! \n\n";
+
+				pressAnyKey();
 				break;
 			}
 
@@ -614,18 +635,10 @@ void writeFileExport(InfoTodo todo[], int jml, string fileName)
 					<< "|" << endl;
 			ofs << " ---------------------------------------------------------------------------------------------------------------------" << endl;
 		}
-
 		ofs.close();
-
-		cout << "Silahkan cek lokasi '/export/'. "
-				 << "Anda akan menemukan hasil export tersebut dengan nama file "
-				 << fileName << "\n"
-				 << "Terima kasih telah menggunakan program kami \n\n";
 	}
 	else
 		cout << "File tidak dapat dibuka. \n\n";
-
-	pressAnyKey();
 }
 
 void editTodo(InfoTodo todo[], int indexTodo, int jml, string user)
@@ -700,12 +713,17 @@ void exportTodo(InfoTodo todo[], int jml, string user)
 	string fileName = "./export/" + user + "-export.txt";
 
 	cout << "Program anda akan diexport dalam bentuk file .txt dengan nama "
-			 << fileName << "\n"
+			 << user << "-export.txt \n"
 			 << "Please wait...\n\n";
 	pressAnyKey();
 
 	// Melakukan write file
 	writeFileExport(todo, jml, fileName);
+
+	cout << "Silahkan cek lokasi folder '/export/'. "
+			 << "Anda akan menemukan hasil export tersebut dengan nama file "
+			 << user << "-export.txt \n"
+			 << "Terima kasih telah menggunakan program kami \n\n";
 }
 
 // Fungsi sorting berdasarkan tanggal
