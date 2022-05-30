@@ -6,7 +6,7 @@
 
 ## Fitur-fitur
 
-Aplikasi POS kami memiliki **4** fitur utama, yaitu sebagai berikut.
+Aplikasi To Do List kami memiliki **4** fitur utama, yaitu sebagai berikut.
 
 ### 1. CRUD Todo
 
@@ -26,7 +26,7 @@ User dapat mengurutkan _todo_ berdasarkan status, tanggal dibuat, dan tanggal be
 
 ![menu export](https://res.cloudinary.com/mrafliy/image/upload/v1653324374/prak-alpro-2021-2/Export_Todo.png)
 
-_CRM (Customer Relationship Management)_ membantu mengatur data member seperti melihat daftar member, menambah member, dan melihat log penjualan dari member.
+User dapat melakukan _Export todo_ menjadi sebuah file _.txt_.
 
 ## What's Next
 
